@@ -18,7 +18,7 @@ CREATE TABLE `Users` (
 
 CREATE TABLE `Roles` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` varchar(50),
+	`name` varchar(50) NOT NULL UNIQUE,
 	`descr` varchar(200) NOT NULL,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -29,7 +29,7 @@ CREATE TABLE `Roles` (
 
 CREATE TABLE `Permissions` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` varchar(50) NOT NULL,
+	`name` varchar(50) NOT NULL UNIQUE,
 	`descr` varchar(200) NOT NULL,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
