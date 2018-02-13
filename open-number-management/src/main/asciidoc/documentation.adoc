@@ -1,0 +1,425 @@
+= Open Number Management API documentation
+:doctype: book
+:icons: font
+:toc: left
+Krzysztof Andryjowicz <krzysztof.andryjowicz@gmail.com>
+
+== 1. Introduction
+
+This document provides details of Open Number Management application REST API.
+
+=== 1.2 Change History
+
+.Change History
+|===
+|Version |Date |Author |Changes 
+
+|0.1
+|2018-02-12
+|Krzysztof Andryjowicz
+|Initial documentation of API
+|===
+
+== 2. User management
+
+<TO DO>
+
+=== 2.1. Add User
+
+<TO DO>
+
+=== 2.2. Modify User
+
+<TO DO>
+
+=== 2.3. Get User by id
+
+<TO DO>
+
+=== 2.4. Get User by login
+
+<TO DO>
+
+== 3. Access management
+
+<TO DO>
+
+=== 3.1. Role management
+
+<TO DO>
+
+==== 3.1.1. Add role
+
+HTTPie request:
+
+include::{snippets}/add-role/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/add-role/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/add-role/http-request.adoc[]
+
+.Table Request Parameters
+
+include::{snippets}/add-role/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/add-role/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/add-role/response-fields.adoc[]
+
+==== 3.1.2. Delete role
+
+HTTPie request:
+
+include::{snippets}/delete-role-by-id/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/delete-role-by-id/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/delete-role-by-id/http-request.adoc[]
+
+Path Parameters
+
+include::{snippets}/delete-role-by-id/path-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/delete-role-by-id/http-response.adoc[]
+
+==== 3.1.3. Modify role
+
+<TO DO>
+
+==== 3.1.4. Get role by id
+
+HTTPie request:
+
+include::{snippets}/get-role-by-id/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/get-role-by-id/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/get-role-by-id/http-request.adoc[]
+
+Path Parameters
+
+include::{snippets}/get-role-by-id/path-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/get-role-by-id/http-response.adoc[]
+
+.Response Parameters
+
+include::{snippets}/get-role-by-id/response-fields.adoc[]
+
+==== 3.1.5. Get role by name
+
+HTTPie request:
+
+include::{snippets}/get-role-by-name/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/get-role-by-name/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/get-role-by-name/http-request.adoc[]
+
+.Request Parameters
+
+include::{snippets}/get-role-by-name/request-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/get-role-by-name/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-role-by-name/response-fields.adoc[]
+
+=== 3.2. Permission management
+
+<TO DO>
+
+==== 3.2.1. Add permission
+
+HTTPie request:
+
+include::{snippets}/add-permission/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/add-permission/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/add-permission/http-request.adoc[]
+
+.Table Request Parameters
+
+include::{snippets}/add-permission/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/add-permission/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/add-permission/response-fields.adoc[]
+
+==== 3.2.2. Delete permission
+
+HTTPie request:
+
+include::{snippets}/delete-permission-by-id/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/delete-permission-by-id/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/delete-permission-by-id/http-request.adoc[]
+
+Path Parameters
+
+include::{snippets}/delete-permission-by-id/path-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/delete-permission-by-id/http-response.adoc[]
+
+==== 3.2.3. Modify permission
+
+<TO DO>
+
+==== 3.2.4. Get permission by id
+
+HTTPie request:
+
+include::{snippets}/get-permission-by-id/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/get-permission-by-id/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/get-permission-by-id/http-request.adoc[]
+
+Path Parameters
+
+include::{snippets}/get-permission-by-id/path-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/get-permission-by-id/http-response.adoc[]
+
+.Response Parameters
+
+include::{snippets}/get-permission-by-id/response-fields.adoc[]
+
+==== 3.2.5. Get permission by name
+
+HTTPie request:
+
+include::{snippets}/get-permission-by-name/httpie-request.adoc[]
+
+curl request:
+
+include::{snippets}/get-permission-by-name/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/get-permission-by-name/http-request.adoc[]
+
+.Request Parameters
+
+include::{snippets}/get-permission-by-name/request-parameters.adoc[]
+
+HTTP response:
+
+include::{snippets}/get-permission-by-name/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-permission-by-name/response-fields.adoc[]
+
+=== 3.3. Permission to resource type management
+
+<TO DO>
+
+==== 3.3.1. Add resource type to permission
+
+<TO DO>
+
+==== 3.3.2. Delete resource type from permission
+
+<TO DO>
+
+==== 3.3.3. Get resource types by permission id
+
+<TO DO>
+
+==== 3.3.4. Get resource types by permission name
+
+<TO DO>
+
+=== 3.4. Role to permission management
+
+<TO DO>
+
+==== 3.4.1. Add permission to role
+
+<TO DO>
+
+==== 3.4.2. Delete permission from role
+
+<TO DO>
+
+==== 3.4.3. Get permissions by role id
+
+<TO DO>
+
+==== 3.4.4. Get permissions by role name
+
+<TO DO>
+
+== 4. Resource type management
+
+<TO DO>
+
+=== 4.1. Add resource type
+
+<TO DO>
+
+=== 4.2. Delete resource type
+
+<TO DO>
+
+=== 4.3. Modify resource type
+
+<TO DO>
+
+=== 4.4. Get resource type by id
+
+<TO DO>
+
+=== 4.5. Get resource type by name
+
+<TO DO>
+
+== 5. Resource statuses management
+
+<TO DO>
+
+=== 5.1. Add resource status
+
+<TO DO>
+
+=== 5.2. Delete resource status
+
+<TO DO>
+
+=== 5.3. Modify resource status
+
+<TO DO>
+
+=== 5.4. Get resource status by id
+
+<TO DO>
+
+=== 5.5. Get resource status by name
+
+<TO DO>
+
+== 6. Resource lifecycle management
+
+<TO DO>
+
+=== 6.1. Add resource status transition
+
+<TO DO>
+
+=== 6.2. Delete resource status transition
+
+<TO DO>
+
+=== 6.3. Get possible resource status transitions by source resource status id
+
+<TO DO>
+
+=== 6.4. Get possible resource status transitions by source resource status name
+
+<TO DO>
+
+== 7. Resource management
+
+<TO DO>
+
+=== 7.1. Resource instance management
+
+<TO DO>
+
+==== 7.1.1. Add resource
+
+<TO DO>
+
+==== 7.1.2. Modify resource
+
+<TO DO>
+
+==== 7.1.3. Get resource by resource type id
+
+<TO DO>
+
+==== 7.1.4. Get resource by resource type name
+
+<TO DO>
+
+==== 7.1.5. Get resource by resource status id
+
+<TO DO>
+
+==== 7.1.6. Get resource by resource status name
+
+<TO DO>
+
+==== 7.1.7. Get resource by related resource id
+
+<TO DO>
+
+==== 7.1.8. Get resource by related resource name
+
+<TO DO>
+
+=== 7.2. Resource instance history management
+
+<TO DO>
+
+==== 7.2.1. Add history entry
+
+<TO DO>
+
+==== 7.2.2. Get history entries by resource id
+
+<TO DO>
+
+==== 7.2.3. Get history entries by resource name
+
+<TO DO>

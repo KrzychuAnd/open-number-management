@@ -14,6 +14,8 @@ import javax.persistence.TemporalType;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,13 +34,22 @@ public class Role implements Serializable/*GrantedAuthority*/ {
 	private String name;
 	private String descr;
 	private String rowAddedUser;
-	private Date rowAddedDttm;
+	@JsonIgnore
+	private Date rowAddedDttm = new Date();
 	private String rowUpdatedUser;
-	private Date rowUpdatedDttm;
+	@JsonIgnore
+	private Date rowUpdatedDttm =  new Date();
 
 	public Role() {
 	}
 
+	public Role(String name, String descr, String rowAddedUser, String rowUpdatedUser) {
+		this.name = name;
+		this.descr = descr;
+		this.rowAddedUser = rowAddedUser;
+		this.rowUpdatedUser = rowUpdatedUser;
+	}
+	
 	public Role(String descr, String rowAddedUser, Date rowAddedDttm, String rowUpdatedUser, Date rowUpdatedDttm) {
 		this.descr = descr;
 		this.rowAddedUser = rowAddedUser;
@@ -69,7 +80,7 @@ public class Role implements Serializable/*GrantedAuthority*/ {
 		this.id = id;
 	}
 
-	@Column(name = "name", length = 50)
+	@Column(name = "name", unique = true, nullable = false, length = 50)
 	public String getName() {
 		return this.name;
 	}

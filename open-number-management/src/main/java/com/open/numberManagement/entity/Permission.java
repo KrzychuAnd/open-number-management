@@ -19,6 +19,8 @@ import javax.persistence.TemporalType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +42,7 @@ public class Permission implements java.io.Serializable {
 
 	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
-	@Column(name = "name", nullable = false, length = 50)
+	@Column(name = "name", nullable = false, unique = true, length = 50)
 	private String name;
 	@Column(name = "descr", nullable = false, length = 200)
 	private String descr;
@@ -48,13 +50,22 @@ public class Permission implements java.io.Serializable {
 	private String rowAddedUser;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "row_added_dttm", nullable = false, length = 19)
-	private Date rowAddedDttm;
+	@JsonIgnore
+	private Date rowAddedDttm = new Date();
 	@Column(name = "row_updated_user", nullable = false, length = 50)
 	private String rowUpdatedUser;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "row_updated_dttm", nullable = false, length = 19)
-	private Date rowUpdatedDttm;
+	@JsonIgnore
+	private Date rowUpdatedDttm = new Date();
 
+	public Permission(String name, String descr, String rowAddedUser, String rowUpdatedUser) {
+		this.name = name;
+		this.descr = descr;
+		this.rowAddedUser = rowAddedUser;
+		this.rowUpdatedUser = rowUpdatedUser;
+	}
+	
 	public Permission(String name, String descr, String rowAddedUser, Date rowAddedDttm, String rowUpdatedUser,
 			Date rowUpdatedDttm) {
 		this.name = name;
@@ -65,7 +76,7 @@ public class Permission implements java.io.Serializable {
 		this.rowUpdatedDttm = rowUpdatedDttm;
 	}
 	
-    @PrePersist
+    /*@PrePersist
     public void onPrePersist() {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	String currentPrincipalName = authentication.getName();
@@ -84,6 +95,6 @@ public class Permission implements java.io.Serializable {
     @PreRemove
     public void onPreRemove() {
         System.out.print("Row deleted");
-    }	
+    }	*/
 
 }

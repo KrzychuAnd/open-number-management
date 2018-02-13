@@ -8,7 +8,7 @@ import com.cmeza.sdgenerator.annotation.SDGenerator;
 @SDGenerator(
         entityPackage = "com.open.numberManagement.entity",
         repositoryPackage = "com.open.numberManagement.service.repository",
-        //managerPackage = "com.acme.managers",
+        //managerPackage = "com.open.numberManagement.managers",
         repositoryPostfix = "Repository",
         //managerPostfix = "Manager",
         onlyAnnotations = false,
