@@ -3,6 +3,8 @@ package com.open.numberManagement.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.Before;
@@ -83,10 +85,27 @@ public class ResourceServiceTests {
 	
 	@Test
 	@Transactional
+	public void getResourcesByResTypeId() throws Exception{
+		List<Resource> resources = this.resourceService.getResourcesByResTypeId(dummyResourceType.getId());
+		
+		assertNotEquals(null, resources.get(0).getId());
+	}		
+	
+	@Test
+	@Transactional
+	public void getResourceByResTypeName() throws Exception{
+		List<Resource> resources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName());
+		
+		assertNotEquals(null, resources.get(0).getId());
+	}			
+	
+	@Test
+	@Transactional
 	public void deleteResource() {
 		Resource testResource;
 		this.resourceService.deleteResource(dummyResource);
 		testResource = this.resourceService.getResourceById(dummyResource.getId());
+		
 		assertEquals(null, testResource);
 	}
 }

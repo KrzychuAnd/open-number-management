@@ -24,13 +24,13 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer>, Jp
 	@Query("select r from Resource r where r.name = :name")
 	Resource getResourceByName(@Param("name") String name);
 	
-	@Description(value = "Get Resources by Reource Type ID")
+	@Description(value = "Get Resources by Resource Type ID")
 	@RestResource(path = "byrestypeid", rel="resources")
 	@Query("select r from Resource r where r.resTypeId = :resTypeId")
-	List<Resource> getResourcesByResTypeId(@Param("resTypeId") Integer res_type_id);
+	List<Resource> getResourcesByResTypeId(@Param("resTypeId") Integer resTypeId);
 	
-	@Description(value = "Get Resources by Reource Type Name")
+	@Description(value = "Get Resources by Resource Type Name")
 	@RestResource(path = "byrestypename", rel="resources")
-	@Query("select r from Resource r, ResourceType rt where r.resTypeId = rt.id and rt.name = :res_type_name")
-	List<Resource> getResourcesByResTypeName(@Param("res_type_name") String res_type_name);	
+	@Query("select r from Resource r, ResourceType rt where r.resTypeId = rt.id and rt.name = :resTypeName")
+	List<Resource> getResourcesByResTypeName(@Param("resTypeName") String resTypeName);	
 }
