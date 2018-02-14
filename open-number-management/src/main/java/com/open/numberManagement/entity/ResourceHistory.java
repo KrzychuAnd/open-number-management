@@ -20,14 +20,21 @@ public class ResourceHistory implements java.io.Serializable {
 
 	private Integer id;
 	private int resId;
-	private int sourceStatusId;
+	private Integer sourceStatusId;
 	private int targetStatusId;
 	private String rowAddedUser;
-	private Date rowAddedDttm;
+	private Date rowAddedDttm = new Date();
 
 	public ResourceHistory() {
 	}
 
+	public ResourceHistory(int resId, Integer sourceStatusId, int targetStatusId, String rowAddedUser) {
+		this.resId = resId;
+		this.sourceStatusId = sourceStatusId;
+		this.targetStatusId = targetStatusId;
+		this.rowAddedUser = rowAddedUser;
+	}
+	
 	public ResourceHistory(int resId, int sourceStatusId, int targetStatusId, String rowAddedUser, Date rowAddedDttm) {
 		this.resId = resId;
 		this.sourceStatusId = sourceStatusId;
@@ -57,12 +64,12 @@ public class ResourceHistory implements java.io.Serializable {
 		this.resId = resId;
 	}
 
-	@Column(name = "source_status_id", nullable = false)
-	public int getSourceStatusId() {
+	@Column(name = "source_status_id", nullable = true)
+	public Integer getSourceStatusId() {
 		return this.sourceStatusId;
 	}
 
-	public void setSourceStatusId(int sourceStatusId) {
+	public void setSourceStatusId(Integer sourceStatusId) {
 		this.sourceStatusId = sourceStatusId;
 	}
 

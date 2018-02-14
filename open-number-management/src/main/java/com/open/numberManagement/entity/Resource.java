@@ -26,11 +26,19 @@ public class Resource implements java.io.Serializable {
 	private String descr;
 	private Integer relResId;
 	private String rowAddedUser;
-	private Date rowAddedDttm;
+	private Date rowAddedDttm = new Date();
 	private String rowUpdatedUser;
-	private Date rowUpdatedDttm;
+	private Date rowUpdatedDttm = new Date();
 
 	public Resource() {
+	}
+
+	public Resource(String name, int resTypeId, int resStatusId, String rowAddedUser, String rowUpdatedUser) {
+		this.name = name;
+		this.resTypeId = resTypeId;
+		this.resStatusId = resStatusId;
+		this.rowAddedUser = rowAddedUser;
+		this.rowUpdatedUser = rowUpdatedUser;
 	}
 
 	public Resource(String name, int resTypeId, int resStatusId, String rowAddedUser, Date rowAddedDttm,

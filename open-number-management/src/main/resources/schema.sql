@@ -105,7 +105,7 @@ CREATE TABLE `Permissions2ResourceType` (
 CREATE TABLE `Resource_History` (
 	`id` int NOT NULL AUTO_INCREMENT,
 	`res_id` int NOT NULL,
-	`source_status_id` int NOT NULL,
+	`source_status_id` int NULL,
 	`target_status_id` int NOT NULL,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

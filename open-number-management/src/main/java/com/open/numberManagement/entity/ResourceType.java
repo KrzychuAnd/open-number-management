@@ -27,11 +27,22 @@ public class ResourceType implements java.io.Serializable {
 	private int prefix;
 	private int reservationTime;
 	private String rowAddedUser;
-	private Date rowAddedDttm;
+	private Date rowAddedDttm = new Date();;
 	private String rowUpdatedUser;
-	private Date rowUpdatedDttm;
+	private Date rowUpdatedDttm = new Date();;
 
 	public ResourceType() {
+	}
+
+	public ResourceType(String name, String descr, int length, int prefix, int reservationTime, String rowAddedUser,
+			String rowUpdatedUser) {
+		this.name = name;
+		this.descr = descr;
+		this.length = length;
+		this.prefix = prefix;
+		this.reservationTime = reservationTime;
+		this.rowAddedUser = rowAddedUser;
+		this.rowUpdatedUser = rowUpdatedUser;
 	}
 
 	public ResourceType(String name, String descr, int length, int prefix, int reservationTime, String rowAddedUser,

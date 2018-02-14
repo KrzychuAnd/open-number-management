@@ -1,8 +1,16 @@
 package com.open.numberManagement.service.repository;
 
+import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.Description;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,4 +19,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ResourceHistoryRepository extends JpaRepository<ResourceHistory, Integer>, JpaSpecificationExecutor<ResourceHistory> {
 
+	@Description(value = "Get Resource Histories by Resource Id")
+	@RestResource(path = "byresid", rel="resourceHistories")
+	@Query("select rh from ResourceHistory rh where rh.resId = :resId")
+	List<ResourceHistory> getResourceHistoriesByResId(@Param("resId") Integer res_id);
 }

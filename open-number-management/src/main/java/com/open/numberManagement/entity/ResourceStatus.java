@@ -23,13 +23,20 @@ public class ResourceStatus implements java.io.Serializable {
 	private String name;
 	private String descr;
 	private String rowAddedUser;
-	private Date rowAddedDttm;
+	private Date rowAddedDttm = new Date();
 	private String rowUpdatedUser;
-	private Date rowUpdatedDttm;
+	private Date rowUpdatedDttm = new Date();
 
 	public ResourceStatus() {
 	}
 
+	public ResourceStatus(String name, String descr, String rowAddedUser, String rowUpdatedUser) {
+		this.name = name;
+		this.descr = descr;
+		this.rowAddedUser = rowAddedUser;
+		this.rowUpdatedUser = rowUpdatedUser;
+	}
+	
 	public ResourceStatus(String name, String descr, String rowAddedUser, Date rowAddedDttm, String rowUpdatedUser,
 			Date rowUpdatedDttm) {
 		this.name = name;

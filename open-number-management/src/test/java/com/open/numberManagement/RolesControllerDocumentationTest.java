@@ -44,7 +44,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.open.numberManagement.entity.Role;
-import com.open.numberManagement.service.repository.RoleRepository;
+import com.open.numberManagement.service.RoleService;;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,7 +65,7 @@ public class RolesControllerDocumentationTest {
 	private ObjectMapper objectMapper;
 	
 	@Autowired
-	private RoleRepository roleRepository;
+	private RoleService roleService;
 
 	@Before
 	public void setUp() {
@@ -117,7 +117,7 @@ public class RolesControllerDocumentationTest {
 
 	@Test
 	public void getRoleById() throws Exception {
-		this.mockMvc.perform(get("/v1/roles/{id}", this.roleRepository.getRoleByName("ADMIN").getId())).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isOk())
 				.andDo(document("get-role-by-id",
 						pathParameters(parameterWithName("id").description("Role id to retrieve")),
 						(responseFields(fieldWithPath("name").description("Name of Role"),
@@ -130,7 +130,7 @@ public class RolesControllerDocumentationTest {
 	@Test
 	@Transactional
 	public void deleteRoleById() throws Exception {
-		this.mockMvc.perform(delete("/v1/roles/{id}", this.roleRepository.getRoleByName("ADMIN").getId())).andExpect(status().isNoContent())
+		this.mockMvc.perform(delete("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isNoContent())
 				.andDo(document("delete-role-by-id",
 						pathParameters(parameterWithName("id").description("Role id to delete"))));
 	}	

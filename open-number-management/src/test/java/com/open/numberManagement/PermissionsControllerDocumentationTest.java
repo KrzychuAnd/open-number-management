@@ -39,7 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.open.numberManagement.entity.Permission;
-import com.open.numberManagement.service.repository.PermissionRepository;
+import com.open.numberManagement.service.PermissionService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -60,7 +60,7 @@ public class PermissionsControllerDocumentationTest {
 	private ObjectMapper objectMapper;
 	
 	@Autowired
-	private PermissionRepository permissionRepository;
+	private PermissionService permissionService;
 
 	@Before
 	public void setUp() {
@@ -112,7 +112,7 @@ public class PermissionsControllerDocumentationTest {
 
 	@Test
 	public void getPermissionById() throws Exception {
-		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionRepository.getPermissionByName("APP_USER").getId())).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName("APP_USER").getId())).andExpect(status().isOk())
 				.andDo(document("get-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to retrieve")),
 						(responseFields(fieldWithPath("name").description("Name of Permission"),
@@ -125,7 +125,7 @@ public class PermissionsControllerDocumentationTest {
 	@Test
 	@Transactional
 	public void deletePermissionById() throws Exception {
-		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionRepository.getPermissionByName("APP_USER").getId())).andExpect(status().isNoContent())
+		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName("APP_USER").getId())).andExpect(status().isNoContent())
 				.andDo(document("delete-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to delete"))));
 	}

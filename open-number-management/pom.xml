@@ -114,6 +114,7 @@
 				<configuration>
 					<includes>
 						<include>**/*DocumentationTest.java</include>
+						<include>**/*Tests.java</include>
 					</includes>
 				</configuration>
 			</plugin>
@@ -137,7 +138,7 @@
 							</outputDirectory>
 							<attributes>
 								<snippets>${snippetsDirectory}</snippets>
-								<revnumber>${version}</revnumber>
+								<revnumber>${project.version}</revnumber>
 								<revdate>${maven.build.timestamp}</revdate>
 							</attributes>
 
