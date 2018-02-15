@@ -2,13 +2,24 @@ package com.open.numberManagement.entity;
 // Generated Feb 10, 2018 1:15:48 AM by Hibernate Tools 5.0.6.Final
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,7 +29,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -35,7 +45,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "roles", catalog = "openNM")
-public class Role implements Serializable/*GrantedAuthority*/ {
+public class Role implements Serializable {
 
 	private Integer id;
 	private String name;
@@ -47,6 +57,36 @@ public class Role implements Serializable/*GrantedAuthority*/ {
 	@JsonIgnore
 	private Date rowUpdatedDttm;
 
+    private User user;
+    
+    /*private Set<Permission> permissions =  new HashSet<>();
+
+    @ManyToMany(cascade = { 
+            CascadeType.PERSIST, 
+            CascadeType.MERGE
+        })
+        @JoinTable(name = "roles2permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "perm_id")
+        )
+    public Set<Permission> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+*/
+	@OneToOne(mappedBy = "role", cascade = CascadeType.ALL, 
+            fetch = FetchType.EAGER, optional = true)
+    public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
 	public Role() {
 	}
 
@@ -144,12 +184,5 @@ public class Role implements Serializable/*GrantedAuthority*/ {
 	public void setRowUpdatedDttm(Date rowUpdatedDttm) {
 		this.rowUpdatedDttm = rowUpdatedDttm;
 	}
-
-	/*
-	@Override
-	public String getAuthority() {
-		return name;
-	}
-	*/
 
 }

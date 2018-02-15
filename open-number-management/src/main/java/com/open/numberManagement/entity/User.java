@@ -3,17 +3,23 @@ package com.open.numberManagement.entity;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -21,7 +27,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "users", catalog = "openNM", uniqueConstraints = @UniqueConstraint(columnNames = "login"))
-public class User implements java.io.Serializable /*, UserDetails*/ {
+public class User implements UserDetails {
 
 	private Integer id;
 	private String login;
@@ -45,11 +52,20 @@ public class User implements java.io.Serializable /*, UserDetails*/ {
 	private Date rowAddedDttm;
 	private String rowUpdateUser;
 	private Date rowUpdateDttm;
-	
-	@OneToOne
-	private Role role;
 
+    private Role role;
+	
 	public User() {
+	}
+
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "role_id", insertable = false, updatable = false)    
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	public User(String login, String firstName, String lastName, String password, char locked, String rowAddedUser,
@@ -199,7 +215,8 @@ public class User implements java.io.Serializable /*, UserDetails*/ {
 	public void setRowUpdateDttm(Date rowUpdateDttm) {
 		this.rowUpdateDttm = rowUpdateDttm;
 	}
-/*
+
+	@Transient
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
@@ -208,36 +225,48 @@ public class User implements java.io.Serializable /*, UserDetails*/ {
 		 // Check if there is appUser permission list assigned to this role
 		 // 
 		 // 
-		return null;
+		Collection<Permission> permissions = new ArrayList();
+		
+		 
+		
+		Permission permission = new Permission("ADMIN_USER", "Administrator User - " + this.role );
+		
+		permissions.add(permission);
+		
+		return permissions;
 	}
 
+	@Transient
 	@Override
 	public String getUsername() {
 		return login;
 	}
 
+	@Transient
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
+	@Transient
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
+		return (this.locked == 'N');
 	}
 
+	@Transient
 	@Override
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
+	@Transient
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;
 	}
-*/
+
 }

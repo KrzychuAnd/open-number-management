@@ -4,26 +4,27 @@ package com.open.numberManagement.entity;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.NaturalId;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,13 +43,14 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Table(name = "permissions", catalog = "openNM")
-public class Permission implements java.io.Serializable {
+public class Permission implements GrantedAuthority {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 
 	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
+	@NaturalId
 	@Column(name = "name", nullable = false, unique = true, length = 50)
 	private String name;
 	@Column(name = "descr", nullable = false, length = 200)
@@ -70,6 +72,9 @@ public class Permission implements java.io.Serializable {
 	@JsonIgnore
 	private Date rowUpdatedDttm;
 
+	/*@ManyToMany(mappedBy = "permissions")
+	private Set<Role> roles = new HashSet<>();*/
+	
 	public Permission(String name, String descr) {
 		this.name = name;
 		this.descr = descr;
@@ -83,6 +88,13 @@ public class Permission implements java.io.Serializable {
 		this.rowAddedDttm = rowAddedDttm;
 		this.rowUpdatedUser = rowUpdatedUser;
 		this.rowUpdatedDttm = rowUpdatedDttm;
+	}
+
+	@JsonIgnore
+	@Transient
+	@Override
+	public String getAuthority() {
+		return this.name;
 	}
 
 }
