@@ -59,7 +59,7 @@ public class Role implements Serializable {
 
     private User user;
     
-    /*private Set<Permission> permissions =  new HashSet<>();
+    private Set<Permission> permissions =  new HashSet<>();
 
     @ManyToMany(cascade = { 
             CascadeType.PERSIST, 
@@ -76,7 +76,7 @@ public class Role implements Serializable {
 	public void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
 	}
-*/
+
 	@OneToOne(mappedBy = "role", cascade = CascadeType.ALL, 
             fetch = FetchType.EAGER, optional = true)
     public User getUser() {

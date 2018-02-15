@@ -3,11 +3,11 @@ package com.open.numberManagement.entity;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -28,6 +28,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -144,8 +145,6 @@ public class User implements UserDetails {
 		this.email = email;
 	}
 
-	
-	//@RestResource(exported = false)
 	@JsonIgnore
 	@Column(name = "password", nullable = false, length = 50)
 	public String getPassword() {
@@ -219,19 +218,13 @@ public class User implements UserDetails {
 	@Transient
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		//
-		 // Retrieve Role.Name for user
-		 // Check if there is appUser permission list assigned to this role
-		 // 
-		 // 
-		Collection<Permission> permissions = new ArrayList();
+		Set<GrantedAuthority> permissions = new HashSet<>();
 		
-		 
-		
-		Permission permission = new Permission("ADMIN_USER", "Administrator User - " + this.role );
-		
-		permissions.add(permission);
+		if (this.role != null) {
+			this.role.getPermissions().forEach(permission -> {
+				permissions.add(new SimpleGrantedAuthority(permission.getName()));
+	        });
+		}
 		
 		return permissions;
 	}
