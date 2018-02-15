@@ -76,7 +76,7 @@ public class PermissionsControllerDocumentationTest {
 	@Transactional
 	public void addPermission() throws Exception {
 
-		Permission permission = new Permission("TEMP_PERM", "Temporary permission", "admin", "admin");
+		Permission permission = new Permission("TEMP_PERM", "Temporary permission");
 
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/v1/permissions")
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)

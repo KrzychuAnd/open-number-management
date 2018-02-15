@@ -81,7 +81,7 @@ public class RolesControllerDocumentationTest {
 	@Transactional
 	public void addRole() throws Exception {
 
-		Role role = new Role("TEMP_ROLE", "Temporary role", "admin", "admin");
+		Role role = new Role("TEMP_ROLE", "Temporary role");
 
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/v1/roles")
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)

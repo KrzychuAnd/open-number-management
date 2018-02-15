@@ -46,7 +46,7 @@ public class ResourceService {
 		ResourceHistory resourceHistory;
 		
 		this.resourceRepository.save(resource);
-		resourceHistory = new ResourceHistory(resource.getId(), null, resource.getResStatusId(), resource.getRowAddedUser());
+		resourceHistory = new ResourceHistory(resource.getId(), null, resource.getResStatusId());
 		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		return resource;
 	}
