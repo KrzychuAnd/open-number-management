@@ -61,7 +61,7 @@ public class Role implements Serializable {
     
     private Set<Permission> permissions =  new HashSet<>();
 
-    @ManyToMany(cascade = { 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { 
             CascadeType.PERSIST, 
             CascadeType.MERGE
         })
