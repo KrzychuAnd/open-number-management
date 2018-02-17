@@ -5,21 +5,16 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 
 import javax.transaction.Transactional;
@@ -33,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,6 +74,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void addRole() throws Exception {
 
@@ -88,46 +85,39 @@ public class RolesControllerDocumentationTest {
 				.content(objectMapper.writeValueAsString(role));
 
 		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isCreated())
-				.andDo(document("add-role",
-						(requestFields(fieldWithPath("name").description("Name of Role"),
+				.andDo(document("add-role", 
+						(relaxedRequestFields(fieldWithPath("name").description("Name of Role"),
+								fieldWithPath("descr").description("Description of Role"))),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Role"),
 								fieldWithPath("descr").description("Description of Role"),
-								fieldWithPath("rowAddedUser").description(
-										"Role added by User with name - Note that User has to exists in OpenNM"),
-								fieldWithPath("rowUpdatedUser").description(
-										"Role updated by User with name - Note that User has to exists in OpenNM"))),
-						(responseFields(fieldWithPath("name").description("Name of Role"),
-								fieldWithPath("descr").description("Description of Role"),
-								fieldWithPath("rowAddedUser").description("Role added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Role updated by User with name"),
 								fieldWithPath("_links").description("Links to created resource")))));
 
 	}
 
 	@Test
+	@WithMockUser("admin")
 	public void getRoleByName() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/search/byname").param("name", "ADMIN")).andExpect(status().isOk())
 				.andDo(document("get-role-by-name",
 						requestParameters(parameterWithName("name").description("Role name to retrieve")),
-						(responseFields(fieldWithPath("name").description("Name of Role"),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Role"),
 								fieldWithPath("descr").description("Description of Role"),
-								fieldWithPath("rowAddedUser").description("Role added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Role updated by User with name"),
 								fieldWithPath("_links").description("Links to retrieve this Role by id")))));
 	}
 
 	@Test
+	@WithMockUser("admin")
 	public void getRoleById() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isOk())
 				.andDo(document("get-role-by-id",
 						pathParameters(parameterWithName("id").description("Role id to retrieve")),
-						(responseFields(fieldWithPath("name").description("Name of Role"),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Role"),
 								fieldWithPath("descr").description("Description of Role"),
-								fieldWithPath("rowAddedUser").description("Role added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Role updated by User with name"),
 								fieldWithPath("_links").description("Links to retrieve this Role by id")))));
 	}
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void deleteRoleById() throws Exception {
 		this.mockMvc.perform(delete("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isNoContent())

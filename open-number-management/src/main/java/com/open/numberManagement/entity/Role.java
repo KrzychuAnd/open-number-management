@@ -50,13 +50,16 @@ public class Role implements Serializable {
 	private Integer id;
 	private String name;
 	private String descr;
+	@JsonIgnore
 	private String rowAddedUser;
 	@JsonIgnore
 	private Date rowAddedDttm;
+	@JsonIgnore
 	private String rowUpdatedUser;
 	@JsonIgnore
 	private Date rowUpdatedDttm;
 
+	@JsonIgnore
     private User user;
     
     private Set<Permission> permissions =  new HashSet<>();

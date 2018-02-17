@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -58,6 +59,7 @@ public class ResourceServiceTests {
 	}
 		
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void addResource() throws Exception{
 		String name = dummyResourceType.getPrefix() + StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
@@ -68,6 +70,7 @@ public class ResourceServiceTests {
 	}
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void getResourceById() throws Exception{
 		Resource resource = this.resourceService.getResourceById(dummyResource.getId());
@@ -76,6 +79,7 @@ public class ResourceServiceTests {
 	}
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void getResourceByName() throws Exception{
 		Resource resource = this.resourceService.getResourceByName(dummyResource.getName());
@@ -84,6 +88,7 @@ public class ResourceServiceTests {
 	}	
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void getResourcesByResTypeId() throws Exception{
 		List<Resource> resources = this.resourceService.getResourcesByResTypeId(dummyResourceType.getId());
@@ -92,6 +97,7 @@ public class ResourceServiceTests {
 	}		
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void getResourceByResTypeName() throws Exception{
 		List<Resource> resources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName());
@@ -100,6 +106,7 @@ public class ResourceServiceTests {
 	}			
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void deleteResource() {
 		Resource testResource;

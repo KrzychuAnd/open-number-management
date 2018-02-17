@@ -9,12 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 
 import javax.transaction.Transactional;
@@ -28,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -73,6 +75,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void addPermission() throws Exception {
 
@@ -84,48 +87,41 @@ public class PermissionsControllerDocumentationTest {
 
 		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isCreated())
 				.andDo(document("add-permission",
-						(requestFields(fieldWithPath("name").description("Name of Permission"),
+						(relaxedRequestFields(fieldWithPath("name").description("Name of Permission"),
+								fieldWithPath("descr").description("Description of Permission"))),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
 								fieldWithPath("descr").description("Description of Permission"),
-								fieldWithPath("rowAddedUser").description(
-										"Permission added by User with name - Note that User has to exists in OpenNM"),
-								fieldWithPath("rowUpdatedUser").description(
-										"Permission updated by User with name - Note that User has to exists in OpenNM"))),
-						(responseFields(fieldWithPath("name").description("Name of Permission"),
-								fieldWithPath("descr").description("Description of Permission"),
-								fieldWithPath("rowAddedUser").description("Permission added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Permission updated by User with name"),
 								fieldWithPath("_links").description("Links to created resource")))));
 
 	}
 
 	@Test
+	@WithMockUser("admin")
 	public void getPermissionByName() throws Exception {
-		this.mockMvc.perform(get("/v1/permissions/search/byname").param("name", "APP_USER")).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/permissions/search/byname").param("name", "ADMIN_PERM")).andExpect(status().isOk())
 				.andDo(document("get-permission-by-name",
 						requestParameters(parameterWithName("name").description("Permission name to retrieve")),
-						(responseFields(fieldWithPath("name").description("Name of Permission"),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
 								fieldWithPath("descr").description("Description of Permission"),
-								fieldWithPath("rowAddedUser").description("Permission added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Permission updated by User with name"),
 								fieldWithPath("_links").description("Links to retrieve this Permission by id")))));
 	}
 
 	@Test
+	@WithMockUser("admin")
 	public void getPermissionById() throws Exception {
-		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName("APP_USER").getId())).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isOk())
 				.andDo(document("get-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to retrieve")),
-						(responseFields(fieldWithPath("name").description("Name of Permission"),
+						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
 								fieldWithPath("descr").description("Description of Permission"),
-								fieldWithPath("rowAddedUser").description("Permission added by User with name"),
-								fieldWithPath("rowUpdatedUser").description("Permission updated by User with name"),
 								fieldWithPath("_links").description("Links to retrieve this Permission by id")))));
 	}
 	
 	@Test
+	@WithMockUser("admin")
 	@Transactional
 	public void deletePermissionById() throws Exception {
-		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName("APP_USER").getId())).andExpect(status().isNoContent())
+		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isNoContent())
 				.andDo(document("delete-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to delete"))));
 	}

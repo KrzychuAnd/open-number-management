@@ -47,6 +47,7 @@ public class Permission implements GrantedAuthority {
 	private String name;
 	@Column(name = "descr", nullable = false, length = 200)
 	private String descr;
+	@JsonIgnore
 	@CreatedBy
 	@Column(name = "row_added_user", nullable = false, length = 50)
 	private String rowAddedUser;
@@ -55,6 +56,7 @@ public class Permission implements GrantedAuthority {
 	@Column(name = "row_added_dttm", nullable = false, length = 19)
 	@JsonIgnore
 	private Date rowAddedDttm;
+	@JsonIgnore
 	@LastModifiedBy
 	@Column(name = "row_updated_user", nullable = false, length = 50)
 	private String rowUpdatedUser;
@@ -64,6 +66,7 @@ public class Permission implements GrantedAuthority {
 	@JsonIgnore
 	private Date rowUpdatedDttm;
 
+	@JsonIgnore
 	@ManyToMany(mappedBy = "permissions")
 	private Set<Role> roles = new HashSet<>();
 	
