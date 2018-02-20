@@ -4,6 +4,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
+import com.open.numberManagement.exception.ResourceNotFoundException;
+import com.open.numberManagement.exception.UserNotFoundException;
 import com.open.numberManagement.service.repository.ResourceRepository;
 
 import java.util.List;
@@ -27,19 +29,19 @@ public class ResourceService {
 	}
 	
 	public Resource getResourceById(Integer id) {
-		return this.resourceRepository.findOne(id);
+		return this.resourceRepository.getResource(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public Resource getResourceByName(String name) {
-		return this.resourceRepository.getResourceByName(name);
+		return this.resourceRepository.getResourceByName(name).orElseThrow(() -> new ResourceNotFoundException(name));
 	}
 	
 	public List<Resource> getResourcesByResTypeId(Integer resTypeId){
-		return this.resourceRepository.getResourcesByResTypeId(resTypeId);
+		return this.resourceRepository.getResourcesByResTypeId(resTypeId).orElseThrow(() -> new ResourceNotFoundException(resTypeId, true));
 	}
 	
 	public List<Resource> getResourcesByResTypeName(String resTypeName){
-		return this.resourceRepository.getResourcesByResTypeName(resTypeName);
+		return this.resourceRepository.getResourcesByResTypeName(resTypeName).orElseThrow(() -> new ResourceNotFoundException(resTypeName, true));
 	}	
 	
 	public Resource addResource(Resource resource) {
