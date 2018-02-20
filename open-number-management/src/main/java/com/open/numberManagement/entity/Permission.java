@@ -7,11 +7,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -69,6 +73,27 @@ public class Permission implements GrantedAuthority {
 	@JsonIgnore
 	@ManyToMany(mappedBy = "permissions")
 	private Set<Role> roles = new HashSet<>();
+	
+	//TO DO!!
+	/*private Set<ResourceType> resourceTypes =  new HashSet<>();
+	
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { 
+            CascadeType.PERSIST, 
+            CascadeType.MERGE
+        })
+        @JoinTable(name = "permissions2resourcetype",
+            joinColumns = @JoinColumn(name = "perm_id"),
+            inverseJoinColumns = @JoinColumn(name = "res_type_id")
+        )
+	public Set<ResourceType> getResourceTypes() {
+		return resourceTypes;
+	}
+
+	public void setResourceTypes(Set<ResourceType> resourceTypes) {
+		this.resourceTypes = resourceTypes;
+	}*/
+	///////////
+	
 	
 	public Permission() {
 		
