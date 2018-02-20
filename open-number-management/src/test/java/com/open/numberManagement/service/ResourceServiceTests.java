@@ -59,7 +59,7 @@ public class ResourceServiceTests {
 	}
 		
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void addResource() throws Exception{
 		String name = dummyResourceType.getPrefix() + StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
@@ -70,7 +70,7 @@ public class ResourceServiceTests {
 	}
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void getResourceById() throws Exception{
 		Resource resource = this.resourceService.getResourceById(dummyResource.getId());
@@ -79,7 +79,7 @@ public class ResourceServiceTests {
 	}
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void getResourceByName() throws Exception{
 		Resource resource = this.resourceService.getResourceByName(dummyResource.getName());
@@ -88,7 +88,7 @@ public class ResourceServiceTests {
 	}	
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void getResourcesByResTypeId() throws Exception{
 		List<Resource> resources = this.resourceService.getResourcesByResTypeId(dummyResourceType.getId());
@@ -97,7 +97,7 @@ public class ResourceServiceTests {
 	}		
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void getResourceByResTypeName() throws Exception{
 		List<Resource> resources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName());
@@ -106,7 +106,7 @@ public class ResourceServiceTests {
 	}			
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void deleteResource() {
 		Resource testResource;

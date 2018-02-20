@@ -40,6 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserDetailsService userDetailsService;
 
 	@Bean
+	protected ShaPasswordEncoder shaPasswordEncoder() {
+		return new ShaPasswordEncoder(encodingStrength);
+	}
+	
+	@Bean
 	@Override
 	protected AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();

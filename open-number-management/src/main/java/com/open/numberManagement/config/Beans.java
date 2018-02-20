@@ -1,5 +1,7 @@
 package com.open.numberManagement.config;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +22,14 @@ public class Beans {
     }
 
     @Bean
-    public DtoMapper dtoMapper(MessageSource messageSource) {
-        return new DtoMapper(messageSource);
+    public ModelMapper modelMapper() {
+    	return new ModelMapper();
+    }
+    
+    @Bean
+    public DtoMapper dtoMapper(MessageSource messageSource, ModelMapper modelMapper) {
+    	modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return new DtoMapper(messageSource, modelMapper);
     }	
     
     @Bean

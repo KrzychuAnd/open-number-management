@@ -75,7 +75,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void addPermission() throws Exception {
 
@@ -96,7 +96,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	public void getPermissionByName() throws Exception {
 		this.mockMvc.perform(get("/v1/permissions/search/byname").param("name", "ADMIN_PERM")).andExpect(status().isOk())
 				.andDo(document("get-permission-by-name",
@@ -107,7 +107,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	public void getPermissionById() throws Exception {
 		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isOk())
 				.andDo(document("get-permission-by-id",
@@ -118,7 +118,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void deletePermissionById() throws Exception {
 		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isNoContent())

@@ -10,21 +10,23 @@ import org.springframework.context.MessageSource;
 public class DtoMapper {
 
     private MessageSource messageSource;
+    
+	private ModelMapper modelMapper;
 
-    public DtoMapper(MessageSource messageSource) {
+    public DtoMapper(MessageSource messageSource, ModelMapper modelMapper) {
         this.messageSource = messageSource;
+        this.modelMapper = modelMapper;
     }
     
     public <Source, Destination> void map(Source source, Destination destination) {
-        new ModelMapper().map(source, destination);
+    	modelMapper.map(source, destination);
     }
 
     public <Source, DestinationType> DestinationType map(Source source, Class<DestinationType> type) {
-        return new ModelMapper().map(source, type);
+    	return modelMapper.map(source, type);
     }
 
     public <SourceElement, DestinationType> List<DestinationType> map(List<SourceElement> source, Class<DestinationType> type) {
-        ModelMapper modelMapper = new ModelMapper();
         return source.stream()
                 .map(element -> modelMapper.map(element, type))
                 .collect(Collectors.toList());

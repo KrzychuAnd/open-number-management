@@ -24,3 +24,4 @@ nbdist/
 .nb-gradle/
 /OpenNM.log
 /OpenNM.log.1
+/OpenNM.log.2

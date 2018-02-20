@@ -74,7 +74,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void addRole() throws Exception {
 
@@ -95,7 +95,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	public void getRoleByName() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/search/byname").param("name", "ADMIN")).andExpect(status().isOk())
 				.andDo(document("get-role-by-name",
@@ -106,7 +106,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	public void getRoleById() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isOk())
 				.andDo(document("get-role-by-id",
@@ -117,7 +117,7 @@ public class RolesControllerDocumentationTest {
 	}
 	
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
 	@Transactional
 	public void deleteRoleById() throws Exception {
 		this.mockMvc.perform(delete("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isNoContent())
