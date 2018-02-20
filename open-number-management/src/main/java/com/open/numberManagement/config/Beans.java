@@ -17,7 +17,7 @@ public class Beans {
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setBasename("errors");
+        messageSource.setBasenames("i18/errors");
         return messageSource;
     }
 
