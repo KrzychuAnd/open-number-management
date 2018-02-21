@@ -27,25 +27,30 @@ public class ResourceController {
 	private ResourceService resourceService;
 	private DtoMapper dtoMapper;
 	private UriBuilder uriBuilder = new UriBuilder();
-	
+
 	@Autowired
 	public ResourceController(ResourceService resourceService, DtoMapper dtoMapper) {
 		this.resourceService = resourceService;
 		this.dtoMapper = dtoMapper;
 	}
-	
+
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResourceDto getResource(@PathVariable("id") Integer id) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Resource resource = resourceService.getResourceById(id);		
-		ResourceType resourceType = resourceService.getResourceType(resource);
-		
-		if (!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
-				/*&& TO DO Check if user has any permission assigned to resourceType */) {
+		Resource resource = resourceService.getResourceById(id);
+
+		if (loggedUserHasNoAccessToResource(resource))
 			throw new UserNoAccessToResourceException(id);
-		}
 
 		return dtoMapper.map(resource, ResourceDto.class);
+	}
+
+	private boolean loggedUserHasNoAccessToResource(Resource resource) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		ResourceType resourceType = resourceService.getResourceType(resource);
+		
+		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
+				&& !resourceType.getAuthorities().isEmpty());
 	}
 }
