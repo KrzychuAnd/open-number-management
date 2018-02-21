@@ -26,4 +26,8 @@ public class ResourceTypeService {
 	public void deleteResourceType(ResourceType resourceType) {
 		this.resourceRepository.delete(resourceType);
 	}
+	
+	public ResourceType getResourceType(Integer id) {
+		return this.resourceRepository.getResourceType(id);
+	}
 }

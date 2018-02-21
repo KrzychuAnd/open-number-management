@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
+import com.open.numberManagement.entity.ResourceType;
 import com.open.numberManagement.exception.ResourceNotFoundException;
 import com.open.numberManagement.exception.UserNotFoundException;
 import com.open.numberManagement.service.repository.ResourceRepository;
@@ -23,9 +24,13 @@ public class ResourceService {
 	@Autowired
 	private ResourceHistoryService resourceHistoryService;
 	
-	public ResourceService(ResourceRepository resourceRepository, ResourceHistoryService resourceHistoryService) {
+	@Autowired
+	private ResourceTypeService resourceTypeService;
+	
+	public ResourceService(ResourceRepository resourceRepository, ResourceHistoryService resourceHistoryService, ResourceTypeService resourceTypeService) {
 		this.resourceRepository = resourceRepository;
 		this.resourceHistoryService = resourceHistoryService;
+		this.resourceTypeService = resourceTypeService;
 	}
 	
 	public Resource getResourceById(Integer id) {
@@ -56,6 +61,10 @@ public class ResourceService {
 	public void deleteResource(Resource resource) {
 		this.resourceHistoryService.deleteResourceHistoryByResId(resource.getId());
 		this.resourceRepository.delete(resource);
+	}
+	
+	public ResourceType getResourceType(Resource resource) {
+		return this.resourceTypeService.getResourceType(resource.getResTypeId());
 	}
 
 }

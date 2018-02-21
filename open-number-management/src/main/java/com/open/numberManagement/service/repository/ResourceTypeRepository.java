@@ -3,6 +3,9 @@ package com.open.numberManagement.service.repository;
 import com.open.numberManagement.entity.ResourceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +16,8 @@ import org.springframework.stereotype.Repository;
 @PreAuthorize("hasAuthority('ADMIN_PERM')")
 public interface ResourceTypeRepository extends JpaRepository<ResourceType, Integer>, JpaSpecificationExecutor<ResourceType> {
 
+	@PreAuthorize("isAuthenticated()")
+	@Description(value = "Get Resource Type by Id")
+	@Query("select rt from ResourceType rt where rt.id = :id")
+	ResourceType getResourceType(@Param("id") Integer id);
 }
