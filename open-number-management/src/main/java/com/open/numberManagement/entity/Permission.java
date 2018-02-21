@@ -74,9 +74,6 @@ public class Permission implements GrantedAuthority {
 	@ManyToMany(mappedBy = "permissions")
 	private Set<Role> roles = new HashSet<>();
 	
-	//TO DO!!
-	/*private Set<ResourceType> resourceTypes =  new HashSet<>();
-	
     @ManyToMany(fetch = FetchType.EAGER, cascade = { 
             CascadeType.PERSIST, 
             CascadeType.MERGE
@@ -85,15 +82,15 @@ public class Permission implements GrantedAuthority {
             joinColumns = @JoinColumn(name = "perm_id"),
             inverseJoinColumns = @JoinColumn(name = "res_type_id")
         )
+	private Set<ResourceType> resourceTypes =  new HashSet<>();
+	
 	public Set<ResourceType> getResourceTypes() {
 		return resourceTypes;
 	}
 
 	public void setResourceTypes(Set<ResourceType> resourceTypes) {
 		this.resourceTypes = resourceTypes;
-	}*/
-	///////////
-	
+	}
 	
 	public Permission() {
 		
