@@ -1,6 +1,9 @@
 package com.open.numberManagement.service.repository;
 
 import com.open.numberManagement.entity.ResourceType;
+
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +22,5 @@ public interface ResourceTypeRepository extends JpaRepository<ResourceType, Inte
 	@PreAuthorize("isAuthenticated()")
 	@Description(value = "Get Resource Type by Id")
 	@Query("select rt from ResourceType rt where rt.id = :id")
-	ResourceType getResourceType(@Param("id") Integer id);
+	Optional<ResourceType> getResourceType(@Param("id") Integer id);
 }

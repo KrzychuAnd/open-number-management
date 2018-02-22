@@ -19,3 +19,7 @@ INSERT INTO `opennm`.`permissions` (`name`, `descr`, `row_added_user`, `row_adde
 -- assign ADMIN_PERM permission to ADMIN role
 INSERT INTO opennm.roles2permissions (`role_id`, `perm_id`, `row_added_user`) 
 		VALUES ((select id from roles where name = 'ADMIN'), (select id from permissions where name = 'ADMIN_PERM'), 'admin');
+
+-- create Resource Status NEW
+INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
+		VALUES ('NEW', 'New', 'admin', 'admin');

@@ -3,6 +3,7 @@ package com.open.numberManagement.service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.entity.ResourceType;
+import com.open.numberManagement.exception.ResourceTypeNotFoundException;
 import com.open.numberManagement.service.repository.ResourceTypeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,6 @@ public class ResourceTypeService {
 	}
 	
 	public ResourceType getResourceType(Integer id) {
-		return this.resourceRepository.getResourceType(id);
+		return this.resourceRepository.getResourceType(id).orElseThrow(() -> new ResourceTypeNotFoundException(id));
 	}
 }
