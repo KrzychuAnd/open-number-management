@@ -9,5 +9,9 @@ public class ResourceTypeNotFoundException extends RuntimeException {
 	public ResourceTypeNotFoundException(Integer resTypeId) {
 		super("Could not find Resource Type with id: '" + resTypeId + "'.");
 	}
+	
+	public ResourceTypeNotFoundException(String resTypeName) {
+		super("Could not find Resource Type with name: '" + resTypeName + "'.");
+	}
 
 }

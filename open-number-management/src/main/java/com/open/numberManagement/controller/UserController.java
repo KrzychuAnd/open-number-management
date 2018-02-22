@@ -44,7 +44,7 @@ public class UserController {
 
 	@PreAuthorize("hasAuthority('ADMIN_PERM')")
 	@RequestMapping(method = RequestMethod.GET)
-	public List<UserDto> getUser(
+	public List<UserDto> getUsers(
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
 			@RequestParam(required = false, defaultValue = "10", name = "pageSize") int pageSize) {
 		List<User> users = userService.getUsers();

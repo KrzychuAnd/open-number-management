@@ -31,4 +31,8 @@ public class ResourceTypeService {
 	public ResourceType getResourceType(Integer id) {
 		return this.resourceRepository.getResourceType(id).orElseThrow(() -> new ResourceTypeNotFoundException(id));
 	}
+	
+	public ResourceType getResourceTypeByName(String name) {
+		return this.resourceRepository.getResourceTypeByName(name).orElseThrow(() -> new ResourceTypeNotFoundException(name));
+	}
 }

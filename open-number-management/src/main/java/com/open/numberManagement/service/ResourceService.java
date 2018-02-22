@@ -83,6 +83,24 @@ public class ResourceService {
 				&& !resourceType.getAuthorities().isEmpty());
 	}
 	
+	public boolean loggedUserHasNoAccessToResourceType(Integer resTypeId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		ResourceType resourceType = this.resourceTypeService.getResourceType(resTypeId);
+		
+		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
+				&& !resourceType.getAuthorities().isEmpty());
+	}	
+	
+	public boolean loggedUserHasNoAccessToResourceType(String resTypeName) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		ResourceType resourceType = this.resourceTypeService.getResourceTypeByName(resTypeName);
+		
+		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
+				&& !resourceType.getAuthorities().isEmpty());
+	}		
+	
 	public Integer isValidAgainstResourceTypeDef(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);
 		

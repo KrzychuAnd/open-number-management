@@ -87,7 +87,7 @@ CREATE TABLE `Resource_Status` (
 
 CREATE TABLE `Resource_lifecycle` (
 	`id` int NOT NULL AUTO_INCREMENT,
-	`source_status_id` int NOT NULL UNIQUE,
+	`source_status_id` int NULL UNIQUE,
 	`target_status_id` int NOT NULL UNIQUE,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

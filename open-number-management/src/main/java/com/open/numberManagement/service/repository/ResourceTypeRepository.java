@@ -23,4 +23,9 @@ public interface ResourceTypeRepository extends JpaRepository<ResourceType, Inte
 	@Description(value = "Get Resource Type by Id")
 	@Query("select rt from ResourceType rt where rt.id = :id")
 	Optional<ResourceType> getResourceType(@Param("id") Integer id);
+	
+	@PreAuthorize("isAuthenticated()")
+	@Description(value = "Get Resource Type by Name")
+	@Query("select rt from ResourceType rt where rt.name = :name")
+	Optional<ResourceType> getResourceTypeByName(@Param("name") String name);
 }
