@@ -1,7 +1,10 @@
 package com.open.numberManagement.dto.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Data;
@@ -23,4 +26,7 @@ public class ResourceDto {
 	private String rowAddedUser;
 	private Date rowAddedDttm;
 	private String rowUpdatedUser;
+	
+	@XmlElement(name = "resourceHistories")
+	private Set<ResourceHistoryDto> resourceHistories = new HashSet<>();;
 }

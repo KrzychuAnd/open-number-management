@@ -2,12 +2,18 @@ package com.open.numberManagement.entity;
 // Generated Feb 10, 2018 1:15:48 AM by Hibernate Tools 5.0.6.Final
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,6 +43,21 @@ public class Resource implements java.io.Serializable {
 	private Date rowAddedDttm;
 	private String rowUpdatedUser;
 	private Date rowUpdatedDttm;
+
+	private Set<ResourceHistory> resourceHistories = new HashSet<>();;
+	
+    @OneToMany(
+            cascade = CascadeType.ALL, 
+            orphanRemoval = true
+        )
+    @JoinColumn(name = "res_id")
+	public Set<ResourceHistory> getResourceHistories() {
+		return resourceHistories;
+	}
+
+	public void setResourceHistories(Set<ResourceHistory> resourceHistories) {
+		this.resourceHistories = resourceHistories;
+	}
 
 	public Resource() {
 	}
