@@ -41,6 +41,10 @@ INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_use
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
 		VALUES ('ACTIVE', 'Active', 'admin', 'admin');
 
+-- create Resource Status RETIRED
+INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
+		VALUES ('RETIRED', 'Retired', 'admin', 'admin');
+
 -- create Resource Lifecycle EMPTY -> NEW
 INSERT INTO opennm.resource_lifecycle (target_status_id, row_added_user)
 		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
@@ -65,4 +69,22 @@ INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_a
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
 		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), (SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
 		
+-- create Resource Lifecycle EMPTY -> RETIRED
+INSERT INTO opennm.resource_lifecycle (target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
 		
+-- create Resource Lifecycle NEW -> RETIRED
+INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
+
+-- create Resource Lifecycle RESERVED -> RETIRED
+INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'RESERVED'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
+		
+-- create Resource Lifecycle ACTIVE -> RETIRED
+INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'ACTIVE'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
+
+-- create Resource Lifecycle QUARANTINE -> RETIRED
+INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
