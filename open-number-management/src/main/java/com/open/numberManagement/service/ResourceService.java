@@ -35,6 +35,8 @@ public class ResourceService {
 	private static final Integer ERR_RESOURCE_NAME_LENGTH_INVALID = 100;
 	private static final Integer ERR_RESOURCE_NAME_PREFIX_INVALID = 200;
 	private static final Integer ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED = 300;
+	
+	private static final String RESOURCE_TYPE_STATUS_RETIRED = "RETIRED";
 
 	@Autowired
 	private ResourceRepository resourceRepository;
@@ -152,6 +154,20 @@ public class ResourceService {
 	public ResourceType getResourceType(Resource resource) {
 		return this.resourceTypeService.getResourceType(resource.getResTypeId());
 	}
+	
+	@Transactional
+	public Resource retireResource(String resourceName) {
+		Resource resource = getResourceByName(resourceName);
+		resource.setResStatusId(resourceStatusService.getResourceStatusByName(RESOURCE_TYPE_STATUS_RETIRED).getId());
+		if (loggedUserHasNoAccessToResourceType(resource))
+			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
+		
+		if (IS_VALID != isValidAgainstBusinessRules(resource, EMPTY_STATUS, resource.getResStatusId()))
+			throw new ResourceInvalidAgainstBusinessRulesException(resource.getName());
+		
+		this.resourceRepository.save(resource);
+		return resource;
+	}
 
 	private boolean loggedUserHasNoAccessToResourceType(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);
@@ -179,7 +195,7 @@ public class ResourceService {
 				&& !resourceType.getAuthorities().isEmpty());
 	}
 
-	public Integer isValidAgainstBusinessRules(Resource resource, Integer sourceStatusId, Integer targetStatusId) {
+	private Integer isValidAgainstBusinessRules(Resource resource, Integer sourceStatusId, Integer targetStatusId) {
 		ResourceType resourceType = this.getResourceType(resource);
 		ResourceStatus targetResourceStatus = resourceStatusService.getResourceStatusById(targetStatusId);
 

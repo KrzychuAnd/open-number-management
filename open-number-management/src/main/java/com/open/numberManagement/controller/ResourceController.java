@@ -1,6 +1,7 @@
 package com.open.numberManagement.controller;
 
 import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.noContent;
 
 import java.net.URI;
 import java.util.List;
@@ -92,5 +93,12 @@ public class ResourceController {
 		resourcesDto = resourceService.addResources(resourcesDto);
 		
 		return resourcesDto;
+	}
+	
+	@RequestMapping(value = "retire/{name}", method = RequestMethod.PATCH)
+	public ResponseEntity<Resource> retireResource(@PathVariable("name") String name) {
+		Resource resource = resourceService.retireResource(name);
+
+		return noContent().build();
 	}
 }

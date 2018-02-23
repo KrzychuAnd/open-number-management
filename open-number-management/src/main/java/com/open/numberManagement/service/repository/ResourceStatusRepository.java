@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 @PreAuthorize("hasAuthority('ADMIN_PERM')")
 public interface ResourceStatusRepository extends JpaRepository<ResourceStatus, Integer>, JpaSpecificationExecutor<ResourceStatus> {
 
+	@PreAuthorize("isAuthenticated()")
 	@Description(value = "Get Resource Status by Name")
 	@RestResource(path = "byname", rel="resourceStatus")
 	@Query("select rs from ResourceStatus rs where rs.name = :name")
