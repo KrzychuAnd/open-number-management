@@ -1,8 +1,12 @@
 package com.open.numberManagement.service;
 
+import static com.open.numberManagement.dto.entity.ResourceResultDto.ADD_RESULT_OK;
+import static com.open.numberManagement.dto.entity.ResourceResultDto.ADD_RESULT_NOK;
 import static com.open.numberManagement.entity.ResourceHistory.EMPTY_STATUS;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.open.numberManagement.dto.entity.ResourceResultDto;
+import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceType;
@@ -11,6 +15,7 @@ import com.open.numberManagement.service.repository.ResourceRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-@Transactional
 public class ResourceService {
 	
 	public static final Integer IS_VALID = 0;
@@ -57,6 +61,40 @@ public class ResourceService {
 		return this.resourceRepository.getResourcesByResTypeName(resTypeName).orElseThrow(() -> new ResourceNotFoundException(resTypeName, true));
 	}	
 	
+	public ResourcesDto addResources(ResourcesDto resourcesDto){
+		
+		resourcesDto.getResources().forEach(new Consumer<ResourceResultDto>() {
+
+			@Override
+			public void accept(ResourceResultDto resourceDto) {
+				Resource resource = new Resource();
+				
+				resource.setResTypeId(resourcesDto.getResTypeId());
+				resource.setResStatusId(resourcesDto.getResStatusId());
+				resource.setName(resourceDto.getName());
+				resource.setDescr(resourceDto.getDescr());
+				
+				if (IS_VALID != isValidAgainstResourceTypeDef(resource)) {
+					resourceDto.setAddResult(ADD_RESULT_NOK);
+					resourceDto.setAddResultMessage("Resource name \'" + resource.getName() + "\' is not valid against Resource Type definition.");
+				}else {
+					try {
+						resource = addResource(resource);
+						resourceDto.setId(resource.getId());
+						resourceDto.setAddResult(ADD_RESULT_OK);
+						resourceDto.setAddResultMessage("Resource added!");
+					}catch(Exception e) {
+						resourceDto.setAddResult(ADD_RESULT_NOK);
+						resourceDto.setAddResultMessage(e.getMessage());						
+					}
+				}
+			}
+		});
+		
+		return resourcesDto;
+	}
+	
+	@Transactional
 	public Resource addResource(Resource resource) {
 		ResourceHistory resourceHistory;
 		
@@ -76,31 +114,30 @@ public class ResourceService {
 	}
 	
 	public boolean loggedUserHasNoAccessToResourceType(Resource resource) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		ResourceType resourceType = this.getResourceType(resource);
+		
+		return hasNoAccessToResourceType(resourceType);
+	}
+	
+	public boolean loggedUserHasNoAccessToResourceType(Integer resTypeId) {
+		ResourceType resourceType = this.resourceTypeService.getResourceType(resTypeId);
+		
+		return hasNoAccessToResourceType(resourceType);
+	}	
+	
+	public boolean loggedUserHasNoAccessToResourceType(String resTypeName) {
+		ResourceType resourceType = this.resourceTypeService.getResourceTypeByName(resTypeName);
+		
+		return hasNoAccessToResourceType(resourceType);
+	}		
+	
+	private boolean hasNoAccessToResourceType(ResourceType resourceType) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
 		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
 				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
 				&& !resourceType.getAuthorities().isEmpty());
 	}
-	
-	public boolean loggedUserHasNoAccessToResourceType(Integer resTypeId) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		ResourceType resourceType = this.resourceTypeService.getResourceType(resTypeId);
-		
-		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
-				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
-				&& !resourceType.getAuthorities().isEmpty());
-	}	
-	
-	public boolean loggedUserHasNoAccessToResourceType(String resTypeName) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		ResourceType resourceType = this.resourceTypeService.getResourceTypeByName(resTypeName);
-		
-		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
-				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
-				&& !resourceType.getAuthorities().isEmpty());
-	}		
 	
 	public Integer isValidAgainstResourceTypeDef(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);

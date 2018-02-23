@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.open.numberManagement.dto.DtoMapper;
 import com.open.numberManagement.dto.entity.ResourceDto;
+import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.User;
 import com.open.numberManagement.exception.ResourceInvalidAgainstResourceTypeException;
@@ -78,7 +80,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<User> addResource(@RequestBody ResourceDto resourceDto) {
+	public ResponseEntity<Resource> addResource(@RequestBody ResourceDto resourceDto) {
 		Resource resource = new Resource();
 		URI uri;
 		
@@ -96,4 +98,15 @@ public class ResourceController {
 		return created(uri).build();
 	}
 
+	@RequestMapping(value= "many", method = RequestMethod.POST)
+	@ResponseBody
+	public ResourcesDto addResources(@RequestBody ResourcesDto resourcesDto) {
+		
+		if (resourceService.loggedUserHasNoAccessToResourceType(resourcesDto.getResTypeId()))
+			throw new UserNoAccessToResourceTypeException(resourcesDto.getResTypeId());
+
+		resourcesDto = resourceService.addResources(resourcesDto);
+		
+		return resourcesDto;
+	}
 }
