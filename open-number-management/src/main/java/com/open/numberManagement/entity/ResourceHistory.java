@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,6 +25,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "resource_history", catalog = "openNM")
 public class ResourceHistory implements java.io.Serializable {
 
+	@Transient
+	public static final Integer EMPTY_STATUS = 0;
+	
 	private Integer id;
 	private int resId;
 	private Integer sourceStatusId;

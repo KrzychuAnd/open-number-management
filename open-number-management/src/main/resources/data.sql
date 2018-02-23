@@ -20,6 +20,11 @@ INSERT INTO `opennm`.`permissions` (`name`, `descr`, `row_added_user`, `row_adde
 INSERT INTO opennm.roles2permissions (`role_id`, `perm_id`, `row_added_user`) 
 		VALUES ((select id from roles where name = 'ADMIN'), (select id from permissions where name = 'ADMIN_PERM'), 'admin');
 
+-- create Resource Status EMPTY 
+SET SESSION SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+INSERT INTO opennm.resource_status (id, name, descr, row_added_user, row_updated_user)
+		VALUES (0, 'EMPTY', 'Empty status', 'admin', 'admin');
+		
 -- create Resource Status NEW
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
 		VALUES ('NEW', 'New', 'admin', 'admin');
@@ -35,10 +40,10 @@ INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_use
 -- create Resource Status ACTIVE
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
 		VALUES ('ACTIVE', 'Active', 'admin', 'admin');
-		
--- create Resource Lifecycle <EMPTY> -> NEW
-INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
-		VALUES (NULL, (SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
+
+-- create Resource Lifecycle EMPTY -> NEW
+INSERT INTO opennm.resource_lifecycle (target_status_id, row_added_user)
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
 		
 -- create Resource Lifecycle NEW -> RESERVED
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
@@ -59,3 +64,5 @@ INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_a
 -- create Resource Lifecycle QUARANTINE -> NEW
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
 		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), (SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
+		
+		

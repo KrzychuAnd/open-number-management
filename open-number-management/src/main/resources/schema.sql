@@ -87,11 +87,12 @@ CREATE TABLE `Resource_Status` (
 
 CREATE TABLE `Resource_lifecycle` (
 	`id` int NOT NULL AUTO_INCREMENT,
-	`source_status_id` int NULL UNIQUE,
-	`target_status_id` int NOT NULL UNIQUE,
+	`source_status_id` int NOT NULL DEFAULT 0,
+	`target_status_id` int NOT NULL,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE KEY (`source_status_id`, `target_status_id`)
 );
 
 CREATE TABLE `Permissions2ResourceType` (
@@ -105,7 +106,7 @@ CREATE TABLE `Permissions2ResourceType` (
 CREATE TABLE `Resource_History` (
 	`id` int NOT NULL AUTO_INCREMENT,
 	`res_id` int NOT NULL,
-	`source_status_id` int NULL,
+	`source_status_id` int NOT NULL DEFAULT 0,
 	`target_status_id` int NOT NULL,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

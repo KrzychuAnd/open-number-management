@@ -1,5 +1,6 @@
 package com.open.numberManagement.service;
 
+import static com.open.numberManagement.entity.ResourceHistory.EMPTY_STATUS;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.entity.Resource;
@@ -60,7 +61,7 @@ public class ResourceService {
 		ResourceHistory resourceHistory;
 		
 		this.resourceRepository.save(resource);
-		resourceHistory = new ResourceHistory(resource.getId(), null, resource.getResStatusId());
+		resourceHistory = new ResourceHistory(resource.getId(), EMPTY_STATUS, resource.getResStatusId());
 		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		return resource;
 	}
