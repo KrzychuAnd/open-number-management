@@ -158,12 +158,15 @@ public class ResourceService {
 	@Transactional
 	public Resource retireResource(String resourceName) {
 		Resource resource = getResourceByName(resourceName);
-		resource.setResStatusId(resourceStatusService.getResourceStatusByName(RESOURCE_TYPE_STATUS_RETIRED).getId());
+		Integer retiredStatusId = resourceStatusService.getResourceStatusByName(RESOURCE_TYPE_STATUS_RETIRED).getId();
+		
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 		
-		if (IS_VALID != isValidAgainstBusinessRules(resource, EMPTY_STATUS, resource.getResStatusId()))
+		if (IS_VALID != isValidAgainstBusinessRules(resource, resource.getResStatusId(), retiredStatusId))
 			throw new ResourceInvalidAgainstBusinessRulesException(resource.getName());
+		
+		resource.setResStatusId(retiredStatusId);
 		
 		this.resourceRepository.save(resource);
 		return resource;
