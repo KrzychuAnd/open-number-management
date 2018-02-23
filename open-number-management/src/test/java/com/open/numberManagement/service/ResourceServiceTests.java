@@ -41,7 +41,7 @@ public class ResourceServiceTests {
 	private ResourceService resourceService;
 
 	private ResourceType dummyResourceType;
-	private ResourceStatus dummyResourceStatus;
+	private ResourceStatus newResourceStatus;
 	private Resource dummyResource;
 
 	@Before
@@ -50,12 +50,11 @@ public class ResourceServiceTests {
 		dummyResourceType = new ResourceType("DUMMY_RES_TYPE", "Dummy resource type", 10, 99, 300);
 		dummyResourceType = this.resourceTypeService.addResourceType(dummyResourceType);
 
-		// Add dummy Resource status
-		dummyResourceStatus = new ResourceStatus("DUMMY_RES_STATUS", "Dummy resource status");
-		dummyResourceStatus = this.resourceStatusService.addResourceType(dummyResourceStatus);
+		// Get NEW Resource status
+		newResourceStatus = this.resourceStatusService.getResourceStatusByName("NEW");
 
 		// Add dummy Resource
-		dummyResource = new Resource("1230560890", dummyResourceType.getId(), dummyResourceStatus.getId());
+		dummyResource = new Resource("9912345678", dummyResourceType.getId(), newResourceStatus.getId());
 		dummyResource = this.resourceService.addResource(dummyResource);
 	}
 
@@ -65,7 +64,7 @@ public class ResourceServiceTests {
 	public void addResource() throws Exception {
 		String name = dummyResourceType.getPrefix()
 				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
-		Resource resource = new Resource(name, dummyResourceType.getId(), dummyResourceStatus.getId());
+		Resource resource = new Resource(name, dummyResourceType.getId(), newResourceStatus.getId());
 		this.resourceService.addResource(resource);
 
 		assertNotEquals(null, resource.getId());
