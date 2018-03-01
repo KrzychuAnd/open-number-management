@@ -9,8 +9,9 @@ public class Constants {
 	public static final String ADMINISTRATOR_PERMISSION = "ADMIN_PERM";
 	
 	//Statuses
-	public static final Integer EMPTY_STATUS = 0;
-	public static final String RESOURCE_TYPE_STATUS_RETIRED = "RETIRED";
+	public static final Integer RESOURCE_EMPTY_STATUS_ID = 0;
+	public static final String RESOURCE_STATUS_RETIRED = "RETIRED";
+	public static final String RESOURCE_STATUS_AVAILABLE = "AVAILABLE";
 	
 	//Add Resource result statuses
 	public static final String ADD_RESULT_OK = "OK";

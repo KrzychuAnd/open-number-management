@@ -1,6 +1,7 @@
 package com.open.numberManagement.service;
 
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
+import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_AVAILABLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -51,8 +52,8 @@ public class ResourceServiceTests {
 		dummyResourceType = new ResourceType("DUMMY_RES_TYPE", "Dummy resource type", 10, 99, 300);
 		dummyResourceType = this.resourceTypeService.addResourceType(dummyResourceType);
 
-		// Get NEW Resource status
-		newResourceStatus = this.resourceStatusService.getResourceStatusByName("NEW");
+		// Get Available Resource status
+		newResourceStatus = this.resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
 
 		// Add dummy Resource
 		dummyResource = new Resource("9912345678", dummyResourceType.getId(), newResourceStatus.getId());

@@ -3,9 +3,9 @@ package com.open.numberManagement.service;
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static com.open.numberManagement.util.Constants.ADD_RESULT_OK;
 import static com.open.numberManagement.util.Constants.ADD_RESULT_NOK;
-import static com.open.numberManagement.util.Constants.EMPTY_STATUS;
+import static com.open.numberManagement.util.Constants.RESOURCE_EMPTY_STATUS_ID;
 import static com.open.numberManagement.util.Constants.IS_VALID;
-import static com.open.numberManagement.util.Constants.RESOURCE_TYPE_STATUS_RETIRED;
+import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_RETIRED;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_LENGTH_INVALID;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_PREFIX_INVALID;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED;
@@ -136,11 +136,11 @@ public class ResourceService {
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 		
-		if (IS_VALID != isValidAgainstBusinessRules(resource, EMPTY_STATUS, resource.getResStatusId()))
+		if (IS_VALID != isValidAgainstBusinessRules(resource, RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId()))
 			throw new ResourceInvalidAgainstBusinessRulesException(resource.getName());
 
 		this.resourceRepository.save(resource);
-		resourceHistory = new ResourceHistory(resource.getId(), EMPTY_STATUS, resource.getResStatusId());
+		resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId());
 		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		return resource;
 	}
@@ -157,7 +157,7 @@ public class ResourceService {
 	@Transactional
 	public Resource retireResource(String resourceName) {
 		Resource resource = getResourceByName(resourceName);
-		Integer retiredStatusId = resourceStatusService.getResourceStatusByName(RESOURCE_TYPE_STATUS_RETIRED).getId();
+		Integer retiredStatusId = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RETIRED).getId();
 		
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
