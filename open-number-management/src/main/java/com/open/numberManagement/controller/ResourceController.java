@@ -5,6 +5,7 @@ import static org.springframework.http.ResponseEntity.noContent;
 
 import java.net.URI;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,15 @@ public class ResourceController {
 		
 		List<Resource> resources = resourceService.getResourcesByResTypeId(resTypeId);
 		List<ResourceDto> resourceDtos = dtoMapper.map(resources, ResourceDto.class);
+		
+		resourceDtos.forEach(new Consumer<ResourceDto>() {
+
+			@Override
+			public void accept(ResourceDto resourceDto) {
+				resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resourceDto.getId()));
+			}
+		});
+		
 		return resourceDtos;
 	}
 	
@@ -54,15 +64,28 @@ public class ResourceController {
 		
 		List<Resource> resources = resourceService.getResourcesByResTypeName(resTypeName);
 		List<ResourceDto> resourceDtos = dtoMapper.map(resources, ResourceDto.class);
+		
+		resourceDtos.forEach(new Consumer<ResourceDto>() {
+
+			@Override
+			public void accept(ResourceDto resourceDto) {
+				resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resourceDto.getId()));
+			}
+		});
+			
+		
 		return resourceDtos;
 	}
 	
-	@RequestMapping(value = "id/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResourceDto getResource(@PathVariable("id") Integer id) {
 		Resource resource = resourceService.getResourceById(id);
 
-		return dtoMapper.map(resource, ResourceDto.class);
+		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
+		resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resource.getId()));
+		
+		return resourceDto;
 	}
 	
 	@RequestMapping(value = "name/{name}", method = RequestMethod.GET)
@@ -70,7 +93,10 @@ public class ResourceController {
 	public ResourceDto getResource(@PathVariable("name") String name) {
 		Resource resource = resourceService.getResourceByName(name);
 
-		return dtoMapper.map(resource, ResourceDto.class);
+		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
+		resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resource.getId()));
+		
+		return resourceDto;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)

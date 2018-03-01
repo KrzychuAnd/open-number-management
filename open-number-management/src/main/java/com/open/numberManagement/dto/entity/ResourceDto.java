@@ -18,6 +18,7 @@ import lombok.Setter;
 public class ResourceDto {
 	
 	private Integer id;
+	private String href;
 	private String name;
 	private int resTypeId;
 	private int resStatusId;

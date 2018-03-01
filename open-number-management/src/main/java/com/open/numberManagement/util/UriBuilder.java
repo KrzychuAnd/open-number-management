@@ -12,4 +12,10 @@ public class UriBuilder {
                 .buildAndExpand(id).toUri();
     }
 
+    public String getHrefWithId(String path, long id) {
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri();
+        
+        return uri.getScheme() + "://" + uri.getAuthority() + "/" + path + id;
+    }
+
 }
