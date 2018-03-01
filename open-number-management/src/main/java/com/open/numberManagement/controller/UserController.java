@@ -2,7 +2,7 @@ package com.open.numberManagement.controller;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.notFound;
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 
 import java.net.URI;
 import java.util.List;
@@ -42,7 +42,7 @@ public class UserController {
 		this.dtoMapper = dtoMapper;
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN_PERM')")
+	@PreAuthorize("hasAuthority('" + ADMINISTRATOR_PERMISSION + "')")
 	@RequestMapping(method = RequestMethod.GET)
 	public List<UserDto> getUsers(
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
@@ -58,7 +58,7 @@ public class UserController {
 		User user = userService.getUser(id);
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+		if (!(authentication.getAuthorities().contains(new SimpleGrantedAuthority(ADMINISTRATOR_PERMISSION)))
 				&& !(user.getLogin().equals(authentication.getName()))) {
 			throw new NoAccessToUserException(id);
 		}
@@ -72,7 +72,7 @@ public class UserController {
 		User user = userService.getUserByLogin(login);
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+		if (!(authentication.getAuthorities().contains(new SimpleGrantedAuthority(ADMINISTRATOR_PERMISSION)))
 				&& !(user.getLogin().equals(authentication.getName()))) {
 			throw new NoAccessToUserException(login);
 		}
@@ -81,7 +81,7 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	@PreAuthorize("hasAuthority('ADMIN_PERM')")
+	@PreAuthorize("hasAuthority('" + ADMINISTRATOR_PERMISSION + "')")
 	public ResponseEntity<User> addUser(@RequestBody UserDto userDto) {
 		User user = new User();
 		URI uri;
@@ -95,7 +95,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "lock/{id}", method = RequestMethod.PATCH)
-	@PreAuthorize("hasAuthority('ADMIN_PERM')")
+	@PreAuthorize("hasAuthority('" + ADMINISTRATOR_PERMISSION + "')")
 	@ResponseBody
 	public ResponseEntity lockUser(@PathVariable("id") Integer id) {
 		User user = userService.getUser(id);

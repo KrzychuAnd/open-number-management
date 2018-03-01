@@ -1,8 +1,14 @@
 package com.open.numberManagement.service;
 
-import static com.open.numberManagement.dto.entity.ResourceResultDto.ADD_RESULT_OK;
-import static com.open.numberManagement.dto.entity.ResourceResultDto.ADD_RESULT_NOK;
-import static com.open.numberManagement.entity.ResourceHistory.EMPTY_STATUS;
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
+import static com.open.numberManagement.util.Constants.ADD_RESULT_OK;
+import static com.open.numberManagement.util.Constants.ADD_RESULT_NOK;
+import static com.open.numberManagement.util.Constants.EMPTY_STATUS;
+import static com.open.numberManagement.util.Constants.IS_VALID;
+import static com.open.numberManagement.util.Constants.RESOURCE_TYPE_STATUS_RETIRED;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_LENGTH_INVALID;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_PREFIX_INVALID;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +36,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ResourceService {
-
-	private static final Integer IS_VALID = 0;
-	private static final Integer ERR_RESOURCE_NAME_LENGTH_INVALID = 100;
-	private static final Integer ERR_RESOURCE_NAME_PREFIX_INVALID = 200;
-	private static final Integer ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED = 300;
-	
-	private static final String RESOURCE_TYPE_STATUS_RETIRED = "RETIRED";
 
 	@Autowired
 	private ResourceRepository resourceRepository;
@@ -166,6 +165,8 @@ public class ResourceService {
 		if (IS_VALID != isValidAgainstBusinessRules(resource, resource.getResStatusId(), retiredStatusId))
 			throw new ResourceInvalidAgainstBusinessRulesException(resource.getName());
 		
+		ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(), retiredStatusId);
+		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		resource.setResStatusId(retiredStatusId);
 		
 		this.resourceRepository.save(resource);
@@ -193,7 +194,7 @@ public class ResourceService {
 	private boolean hasNoAccessToResourceType(ResourceType resourceType) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN_PERM")))
+		return ((!(authentication.getAuthorities().contains(new SimpleGrantedAuthority(ADMINISTRATOR_PERMISSION )))
 				&& (Collections.disjoint(authentication.getAuthorities(), resourceType.getAuthorities())))
 				&& !resourceType.getAuthorities().isEmpty());
 	}

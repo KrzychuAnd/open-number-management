@@ -24,9 +24,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "resource_history", catalog = "openNM")
 public class ResourceHistory implements java.io.Serializable {
-
-	@Transient
-	public static final Integer EMPTY_STATUS = 0;
 	
 	private Integer id;
 	private int resId;

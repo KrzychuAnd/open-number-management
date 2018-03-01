@@ -1,5 +1,6 @@
 package com.open.numberManagement;
 
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -75,7 +76,7 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	@Transactional
 	public void addPermission() throws Exception {
 
@@ -96,9 +97,9 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	public void getPermissionByName() throws Exception {
-		this.mockMvc.perform(get("/v1/permissions/search/byname").param("name", "ADMIN_PERM")).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/permissions/search/byname").param("name", ADMINISTRATOR_PERMISSION)).andExpect(status().isOk())
 				.andDo(document("get-permission-by-name",
 						requestParameters(parameterWithName("name").description("Permission name to retrieve")),
 						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
@@ -107,9 +108,9 @@ public class PermissionsControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	public void getPermissionById() throws Exception {
-		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isOk())
+		this.mockMvc.perform(get("/v1/permissions/{id}", this.permissionService.getPermissionByName(ADMINISTRATOR_PERMISSION).getId())).andExpect(status().isOk())
 				.andDo(document("get-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to retrieve")),
 						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
@@ -118,10 +119,10 @@ public class PermissionsControllerDocumentationTest {
 	}
 	
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	@Transactional
 	public void deletePermissionById() throws Exception {
-		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName("ADMIN_PERM").getId())).andExpect(status().isNoContent())
+		this.mockMvc.perform(delete("/v1/permissions/{id}", this.permissionService.getPermissionByName(ADMINISTRATOR_PERMISSION).getId())).andExpect(status().isNoContent())
 				.andDo(document("delete-permission-by-id",
 						pathParameters(parameterWithName("id").description("Permission id to delete"))));
 	}

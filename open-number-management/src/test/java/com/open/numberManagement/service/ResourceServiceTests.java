@@ -1,5 +1,6 @@
 package com.open.numberManagement.service;
 
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -59,7 +60,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void addResource() throws Exception {
 		String name = dummyResourceType.getPrefix()
@@ -71,7 +72,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void getResourceById() throws Exception {
 		Resource resource = this.resourceService.getResourceById(dummyResource.getId());
@@ -80,7 +81,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void getResourceByName() throws Exception {
 		Resource resource = this.resourceService.getResourceByName(dummyResource.getName());
@@ -89,7 +90,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void getResourcesByResTypeId() throws Exception {
 		List<Resource> resources = this.resourceService.getResourcesByResTypeId(dummyResourceType.getId());
@@ -98,7 +99,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void getResourceByResTypeName() throws Exception {
 		List<Resource> resources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName());
@@ -107,7 +108,7 @@ public class ResourceServiceTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "ADMIN_PERM" })
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void deleteResource() {
 		Resource testResource;

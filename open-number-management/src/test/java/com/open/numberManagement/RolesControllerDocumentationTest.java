@@ -1,5 +1,6 @@
 package com.open.numberManagement;
 
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -74,7 +75,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	@Transactional
 	public void addRole() throws Exception {
 
@@ -95,7 +96,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	public void getRoleByName() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/search/byname").param("name", "ADMIN")).andExpect(status().isOk())
 				.andDo(document("get-role-by-name",
@@ -106,7 +107,7 @@ public class RolesControllerDocumentationTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	public void getRoleById() throws Exception {
 		this.mockMvc.perform(get("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isOk())
 				.andDo(document("get-role-by-id",
@@ -117,7 +118,7 @@ public class RolesControllerDocumentationTest {
 	}
 	
 	@Test
-	@WithMockUser(username = "admin", authorities= {"ADMIN_PERM"})
+	@WithMockUser(username = "admin", authorities= {ADMINISTRATOR_PERMISSION})
 	@Transactional
 	public void deleteRoleById() throws Exception {
 		this.mockMvc.perform(delete("/v1/roles/{id}", this.roleService.getRoleByName("ADMIN").getId())).andExpect(status().isNoContent())
