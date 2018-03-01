@@ -25,9 +25,9 @@ SET SESSION SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 INSERT INTO opennm.resource_status (id, name, descr, row_added_user, row_updated_user)
 		VALUES (0, 'EMPTY', 'Empty status', 'admin', 'admin');
 		
--- create Resource Status NEW
+-- create Resource Status AVAILABLE
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
-		VALUES ('NEW', 'New', 'admin', 'admin');
+		VALUES ('AVAILABLE', 'Available', 'admin', 'admin');
 		
 -- create Resource Status RESERVED
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
@@ -45,13 +45,13 @@ INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_use
 INSERT INTO opennm.resource_status (name, descr, row_added_user, row_updated_user)
 		VALUES ('RETIRED', 'Retired', 'admin', 'admin');
 
--- create Resource Lifecycle EMPTY -> NEW
+-- create Resource Lifecycle EMPTY -> AVAILABLE
 INSERT INTO opennm.resource_lifecycle (target_status_id, row_added_user)
-		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'AVAILABLE'), 'admin');
 		
--- create Resource Lifecycle NEW -> RESERVED
+-- create Resource Lifecycle AVAILABLE -> RESERVED
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
-		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), (SELECT id  FROM opennm.resource_status WHERE name = 'RESERVED'), 'admin');
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'AVAILABLE'), (SELECT id  FROM opennm.resource_status WHERE name = 'RESERVED'), 'admin');
 
 -- create Resource Lifecycle RESERVED -> ACTIVE
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
@@ -61,21 +61,21 @@ INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_a
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
 		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'ACTIVE'), (SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), 'admin');
 		
--- create Resource Lifecycle RESERVED -> NEW
+-- create Resource Lifecycle RESERVED -> AVAILABLE
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
-		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'RESERVED'), (SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'RESERVED'), (SELECT id  FROM opennm.resource_status WHERE name = 'AVAILABLE'), 'admin');
 		
--- create Resource Lifecycle QUARANTINE -> NEW
+-- create Resource Lifecycle QUARANTINE -> AVAILABLE
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
-		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), (SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), 'admin');
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'QUARANTINE'), (SELECT id  FROM opennm.resource_status WHERE name = 'AVAILABLE'), 'admin');
 		
 -- create Resource Lifecycle EMPTY -> RETIRED
 INSERT INTO opennm.resource_lifecycle (target_status_id, row_added_user)
 		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
 		
--- create Resource Lifecycle NEW -> RETIRED
+-- create Resource Lifecycle AVAILABLE -> RETIRED
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
-		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'NEW'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
+		VALUES ((SELECT id  FROM opennm.resource_status WHERE name = 'AVAILABLE'), (SELECT id  FROM opennm.resource_status WHERE name = 'RETIRED'), 'admin');
 
 -- create Resource Lifecycle RESERVED -> RETIRED
 INSERT INTO opennm.resource_lifecycle (source_status_id, target_status_id, row_added_user)
