@@ -31,8 +31,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "resource_type", catalog = "openNM", uniqueConstraints = { @UniqueConstraint(columnNames = "length"),
-		@UniqueConstraint(columnNames = "name"), @UniqueConstraint(columnNames = "prefix") })
+@Table(name = "resource_type", catalog = "openNM", uniqueConstraints = { @UniqueConstraint(columnNames = "name"),
+		@UniqueConstraint(columnNames = {"length", "prefix"}) })
 public class ResourceType implements java.io.Serializable {
 
 	private Integer id;
@@ -118,7 +118,7 @@ public class ResourceType implements java.io.Serializable {
 		this.descr = descr;
 	}
 
-	@Column(name = "length", unique = true, nullable = false)
+	@Column(name = "length", nullable = false)
 	public int getLength() {
 		return this.length;
 	}
@@ -127,7 +127,7 @@ public class ResourceType implements java.io.Serializable {
 		this.length = length;
 	}
 
-	@Column(name = "prefix", unique = true, nullable = false)
+	@Column(name = "prefix", nullable = false)
 	public int getPrefix() {
 		return this.prefix;
 	}

@@ -71,7 +71,8 @@ CREATE TABLE `Resource_Type` (
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`row_updated_user` varchar(50) NOT NULL,
 	`row_updated_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`)
+	PRIMARY KEY (`id`),
+	UNIQUE KEY (`length`, `prefix`)
 );
 
 CREATE TABLE `Resource_Status` (

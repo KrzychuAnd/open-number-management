@@ -36,4 +36,8 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer>, Jp
 	@Description(value = "Get Resources by Resource Type Name")
 	@Query("select r from Resource r, ResourceType rt where r.resTypeId = rt.id and rt.name = :resTypeName")
 	Optional<List<Resource>> getResourcesByResTypeName(@Param("resTypeName") String resTypeName);	
+
+	@Description(value = "Get Max Resource number by Resource Type ID")
+	@Query("select max(cast(r.name as long)) from Resource r where r.resTypeId = :resTypeId")
+	Optional<Long> getMaxResourceNumberByResTypeId(@Param("resTypeId") Integer resTypeId);
 }

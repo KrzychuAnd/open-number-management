@@ -2,6 +2,7 @@ package com.open.numberManagement.controller;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
+import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_PATH;
 
 import java.net.URI;
 import java.util.List;
@@ -19,12 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.open.numberManagement.dto.DtoMapper;
 import com.open.numberManagement.dto.entity.ResourceDto;
+import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.service.ResourceService;
 import com.open.numberManagement.util.UriBuilder;
 
-@RequestMapping(value = "v1/resources")
+@RequestMapping(value = URL_VERSION_AND_RESOURCE_PATH)
 @RestController
 public class ResourceController {
 
@@ -50,7 +52,7 @@ public class ResourceController {
 
 			@Override
 			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resourceDto.getId()));
+				resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
 			}
 		});
 		
@@ -69,7 +71,7 @@ public class ResourceController {
 
 			@Override
 			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resourceDto.getId()));
+				resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
 			}
 		});
 			
@@ -83,7 +85,7 @@ public class ResourceController {
 		Resource resource = resourceService.getResourceById(id);
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
-		resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resource.getId()));
+		resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resource.getId()));
 		
 		return resourceDto;
 	}
@@ -94,7 +96,7 @@ public class ResourceController {
 		Resource resource = resourceService.getResourceByName(name);
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
-		resourceDto.setHref(uriBuilder.getHrefWithId( "v1/resources/", resource.getId()));
+		resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resource.getId()));
 		
 		return resourceDto;
 	}
@@ -127,4 +129,13 @@ public class ResourceController {
 
 		return noContent().build();
 	}
+	
+	@RequestMapping(value= "generate", method = RequestMethod.POST)
+	@ResponseBody
+	public ResourcesDto generateResources(@RequestBody ResourceGenerateDto resourceGenerateDto) {
+		
+		ResourcesDto resourcesDto = resourceService.generateResources(resourceGenerateDto);
+		
+		return resourcesDto;
+	}	
 }

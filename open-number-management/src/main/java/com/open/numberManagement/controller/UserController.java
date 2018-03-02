@@ -3,6 +3,7 @@ package com.open.numberManagement.controller;
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
+import static com.open.numberManagement.util.Constants.URL_VERSION_AND_USER_PATH;
 
 import java.net.URI;
 import java.util.List;
@@ -28,7 +29,7 @@ import com.open.numberManagement.service.UserService;
 import com.open.numberManagement.util.UriBuilder;
 import com.open.numberManagement.exception.*;
 
-@RequestMapping(value = "v1/users")
+@RequestMapping(value = URL_VERSION_AND_USER_PATH)
 @RestController
 public class UserController {
 

@@ -17,7 +17,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "resource_lifecycle", catalog = "openNM", uniqueConstraints = {
-		@UniqueConstraint(columnNames = "source_status_id"), @UniqueConstraint(columnNames = "target_status_id") })
+		@UniqueConstraint(columnNames = {"source_status_id", "target_status_id"}) })
 public class ResourceLifecycle implements java.io.Serializable {
 
 	private Integer id;

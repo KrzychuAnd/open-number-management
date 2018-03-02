@@ -20,6 +20,9 @@ public class ResourcesDto {
 	
 	private int resTypeId;
 	private int resStatusId;
+
+	@XmlElement(name = "result")
+	private ResultDto result = new ResultDto();
 	
 	@XmlElement(name = "resource")
 	private List<ResourceResultDto> resources;
