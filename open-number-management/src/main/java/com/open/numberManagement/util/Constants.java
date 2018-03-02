@@ -23,6 +23,7 @@ public class Constants {
 	public static final Integer RESOURCE_EMPTY_STATUS_ID = 0;
 	public static final String RESOURCE_STATUS_RETIRED = "RETIRED";
 	public static final String RESOURCE_STATUS_AVAILABLE = "AVAILABLE";
+	public static final String RESOURCE_STATUS_RESERVED = "RESERVED";
 	
 	//Resource result statuses
 	public static final String RESOURCE_RESULT_OK = "OK";

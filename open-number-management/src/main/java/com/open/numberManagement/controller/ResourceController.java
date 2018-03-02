@@ -138,4 +138,11 @@ public class ResourceController {
 		
 		return resourcesDto;
 	}	
+	
+	@RequestMapping(value= "reserve", method = RequestMethod.PATCH)
+	@ResponseBody
+	public List<ResourceDto> reserveResources(@RequestBody ResourceGenerateDto resourceGenerateDto) {
+		
+		return resourceService.reserveResources(resourceGenerateDto);
+	}	
 }

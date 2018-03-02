@@ -8,6 +8,8 @@ import static com.open.numberManagement.util.Constants.RESOURCE_RESULT_GENERATE_
 import static com.open.numberManagement.util.Constants.RESOURCE_GENERATE_RESULT_MSG;
 import static com.open.numberManagement.util.Constants.IS_VALID;
 import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_RETIRED;
+import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_AVAILABLE;
+import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_RESERVED;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_LENGTH_INVALID;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_PREFIX_INVALID;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED;
@@ -24,6 +26,7 @@ import static com.open.numberManagement.util.Constants.ERR_RESOURCE_GENERATE_MAX
 import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.dto.DtoMapper;
+import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourceResultDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
@@ -46,6 +49,8 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -271,6 +276,49 @@ public class ResourceService {
 
 		this.resourceRepository.save(resource);
 		return resource;
+	}
+
+	@Transactional
+	public List<ResourceDto> reserveResources(ResourceGenerateDto resourceGenerateDto) {
+		ResourceStatus availableResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
+		ResourceStatus reservedResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RESERVED);
+
+		if (loggedUserHasNoAccessToResourceType(resourceGenerateDto.getResTypeId()))
+			throw new UserNoAccessToResourceTypeException(resourceGenerateDto.getResTypeId());
+		
+		evaluateResultOfValidation(isAllowedStatusTransition(availableResourceStatus.getId(), reservedResourceStatus.getId()),
+				availableResourceStatus.getId(), reservedResourceStatus.getId(), resourceGenerateDto.getResTypeId());
+		
+		List<Resource> resources = resourceRepository
+				.getResourcesByResTypeAndStatusId(resourceGenerateDto.getResTypeId(), availableResourceStatus.getId(),
+						new PageRequest(0, resourceGenerateDto.getNumber(), Sort.Direction.ASC, "name"))
+				.orElseThrow(() -> new RuntimeException());
+
+		resources.forEach(new Consumer<Resource>() {
+
+			@Override
+			public void accept(Resource resource) {
+				ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(), reservedResourceStatus.getId());
+				resourceHistoryService.addResourceHistory(resourceHistory);
+				resource.setResStatusId(reservedResourceStatus.getId());
+				resourceRepository.save(resource);
+			}
+
+		});
+
+		List<ResourceDto> resourcesDto = dtoMapper.map(resources, ResourceDto.class);
+
+		resourcesDto.forEach(new Consumer<ResourceDto>() {
+
+			@Override
+			public void accept(ResourceDto resourceDto) {
+				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+				
+			}
+			
+		});
+		
+		return resourcesDto;
 	}
 
 	private boolean loggedUserHasNoAccessToResourceType(Resource resource) {
