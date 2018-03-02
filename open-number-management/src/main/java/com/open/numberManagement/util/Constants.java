@@ -38,16 +38,44 @@ public class Constants {
 	public static final Integer ERR_RESOURCE_NAME_LENGTH_INVALID = 100;
 	public static final Integer ERR_RESOURCE_NAME_PREFIX_INVALID = 105;
 	public static final Integer ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED = 110;
+	public static final Integer ERR_RESOURCE_NOT_FOUND = 115;
 
-	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED = 200;
-	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS = 205;
+	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED = 150;
+	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS = 155;
+	
+	public static final Integer ERR_RESOURCE_STATUS_NOT_FOUND = 200;
+	
+	public static final Integer ERR_RESOURCE_TYPE_NOT_FOUND = 250;
+	
+	public static final Integer ERR_USER_NO_ACCESS = 300;
+	public static final Integer ERR_USER_NO_ACCESS_TO_RESOURCE = 305;
+	public static final Integer ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE = 310;
+	public static final Integer ERR_USER_NOT_FOUND = 350;
 	
 	//Error messages
 	public static final String ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED_MSG = "Generate Maximum numbers exceeded. Limit is " + NUMBER_OF_RESOURCES_TO_GENERATE_LIMIT;
-	public static final String ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED_MSG = "Status transition from %s to %s is not allowed";
-	public static final String ERR_RESOURCE_NAME_LENGTH_INVALID_MSG = "Resource name length is not valid. Proper length of Resource Type %s is %s";
-	public static final String ERR_RESOURCE_NAME_PREFIX_INVALID_MSG = "Resource prefix is not valid. Propert perfix of Resource Type %s is %s";
-	public static final String ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS_MSG = "Maximum Resource number of '%s' Resource Type already exists!";
+	public static final String ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED_MSG = "Status transition from %s to %s is not allowed.";
+	public static final String ERR_RESOURCE_NAME_LENGTH_INVALID_MSG = "Resource name length is not valid. Proper length of Resource Type %s is %s.";
+	public static final String ERR_RESOURCE_NAME_PREFIX_INVALID_MSG = "Resource prefix is not valid. Propert perfix of Resource Type %s is %s.";
+	public static final String ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS_MSG = "Maximum Resource number of '%s' Resource Type already exists.";
+	public static final String ERR_RESOURCE_NOT_FOUND_RES_ID_MSG = "Could not find resource with id '%s'.";
+	public static final String ERR_RESOURCE_NOT_FOUND_RES_NAME_MSG = "Could not find resource with name '%s'.";
+	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_MSG = "Could not find resource with resource type id '%s'.";
+	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG = "Could not find resource with resource type name '%s'.";
+	
+	public static final String ERR_RESOURCE_STATUS_NOT_FOUND_MSG = "Could not find Resource Status with id %s.";
+	
+	public static final String ERR_RESOURCE_TYPE_NOT_FOUND_RES_TYPE_ID_MSG = "Could not find Resource Type with id %s.";
+	public static final String ERR_RESOURCE_TYPE_NOT_FOUND_RES_TYPE_NAME_MSG = "Could not find Resource Type with name %s.";
+	
+	public static final String ERR_USER_NO_ACCESS_ID_MSG = "You do not have access to user with id %s.";
+	public static final String ERR_USER_NO_ACCESS_LOGIN_MSG = "You do not have access to user with login %s.";
+	public static final String ERR_USER_NO_ACCESS_TO_RESOURCE_ID_MSG = "You do not have access to resource with id %s.";
+	public static final String ERR_USER_NO_ACCESS_TO_RESOURCE_NAME_MSG = "You do not have access to resource with name %s.";
+	public static final String ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_ID_MSG = "You do not have access to Resource Type with id %s.";
+	public static final String ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_NAME_MSG = "You do not have access to Resource Type with name %s.";
+	public static final String ERR_USER_NOT_FOUND_ID_MSG = "Could not find User with id %s.";
+	public static final String ERR_USER_NOT_FOUND_LOGIN_MSG = "Could not find User with name %s.";
 	
 	//Info messages
 	public static final String INFO_RESOURCE_AUTO_GENERATED = "Resource automatically generated via REST API";

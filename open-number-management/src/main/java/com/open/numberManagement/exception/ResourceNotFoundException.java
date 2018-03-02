@@ -1,5 +1,11 @@
 package com.open.numberManagement.exception;
 
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NOT_FOUND;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NOT_FOUND_RES_ID_MSG;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NOT_FOUND_RES_NAME_MSG;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_MSG;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -7,18 +13,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundException extends RuntimeException {
 
 	public ResourceNotFoundException(Integer resId) {
-		super("Could not find resource '" + resId + "'.");
+		super(ERR_RESOURCE_NOT_FOUND + " - " + String.format(ERR_RESOURCE_NOT_FOUND_RES_ID_MSG, resId));
 	}
 	
 	public ResourceNotFoundException(String name) {
-		super("Could not find resource '" + name + "'.");
+		super(ERR_RESOURCE_NOT_FOUND + " - " + String.format(ERR_RESOURCE_NOT_FOUND_RES_NAME_MSG, name));
 	}
 	
 	public ResourceNotFoundException(Integer resTypeId, boolean isResType) {
-		super("Could not find resource with resource type Id '" + resTypeId + "'.");
+		super(ERR_RESOURCE_NOT_FOUND + " - " + String.format(ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_MSG, resTypeId));
 	}
 	
 	public ResourceNotFoundException(String resType, boolean isResType) {
-		super("Could not find resource with resource type '" + resType + "'.");
+		super(ERR_RESOURCE_NOT_FOUND + " - " + String.format(ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG, resType));
 	}	
 }

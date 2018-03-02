@@ -1,5 +1,9 @@
 package com.open.numberManagement.exception;
 
+import static com.open.numberManagement.util.Constants.ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE;
+import static com.open.numberManagement.util.Constants.ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_ID_MSG;
+import static com.open.numberManagement.util.Constants.ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_NAME_MSG;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -7,10 +11,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserNoAccessToResourceTypeException extends RuntimeException {
 
 	public UserNoAccessToResourceTypeException(Integer resTypeId) {
-		super("You do not have access to Resource Type with id '" + resTypeId + "'.");
+		super(ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE + " - " + String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_ID_MSG, resTypeId));
 	}
 	
 	public UserNoAccessToResourceTypeException(String name) {
-		super("You do not have access to Resource Type with name '" + name + "'.");
+		super(ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE + " - " + String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_TYPE_NAME_MSG, name));
 	}
 }
