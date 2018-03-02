@@ -112,14 +112,6 @@ public class ResourceService {
 		return resource;
 	}
 
-	public List<Resource> getResourcesByResTypeId(Integer resTypeId) {
-		if (loggedUserHasNoAccessToResourceType(resTypeId))
-			throw new UserNoAccessToResourceTypeException(resTypeId);
-
-		return this.resourceRepository.getResourcesByResTypeId(resTypeId)
-				.orElseThrow(() -> new ResourceNotFoundException(resTypeId, true));
-	}
-
 	public PageResourceDto getResourcesByResTypeName(String resTypeName, int pageNumber, int pageSize) {
 		if (loggedUserHasNoAccessToResourceType(resTypeName))
 			throw new UserNoAccessToResourceTypeException(resTypeName);

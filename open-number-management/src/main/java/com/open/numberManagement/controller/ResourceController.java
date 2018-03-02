@@ -25,7 +25,9 @@ import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceType;
 import com.open.numberManagement.service.ResourceService;
+import com.open.numberManagement.service.ResourceTypeService;
 import com.open.numberManagement.util.UriBuilder;
 
 @RequestMapping(value = URL_VERSION_AND_RESOURCE_PATH)
@@ -33,32 +35,26 @@ import com.open.numberManagement.util.UriBuilder;
 public class ResourceController {
 
 	private ResourceService resourceService;
+	private ResourceTypeService resourceTypeService;
+	
 	private DtoMapper dtoMapper;
 	private UriBuilder uriBuilder = new UriBuilder();
 
 	@Autowired
-	public ResourceController(ResourceService resourceService, DtoMapper dtoMapper) {
+	public ResourceController(ResourceService resourceService, DtoMapper dtoMapper, ResourceTypeService resourceTypeService) {
 		this.resourceService = resourceService;
 		this.dtoMapper = dtoMapper;
+		this.resourceTypeService = resourceTypeService;
 	}
 
 	@RequestMapping(value = "resTypeId/{resTypeId}", method = RequestMethod.GET)
-	public List<ResourceDto> getResourcesByResTypeId(@PathVariable("resTypeId") Integer resTypeId,
+	public PageResourceDto getResourcesByResTypeId(@PathVariable("resTypeId") Integer resTypeId,
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
 			@RequestParam(required = false, defaultValue = "10", name = "pageSize") int pageSize) {
 		
-		List<Resource> resources = resourceService.getResourcesByResTypeId(resTypeId);
-		List<ResourceDto> resourceDtos = dtoMapper.map(resources, ResourceDto.class);
+		ResourceType resourceType = resourceTypeService.getResourceType(resTypeId);
 		
-		resourceDtos.forEach(new Consumer<ResourceDto>() {
-
-			@Override
-			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-			}
-		});
-		
-		return resourceDtos;
+		return resourceService.getResourcesByResTypeName(resourceType.getName(), pageNumber, pageSize);
 	}
 	
 	@RequestMapping(value = "resTypeName/{resTypeName}", method = RequestMethod.GET)

@@ -97,15 +97,6 @@ public class ResourceServiceTests {
 	@Test
 	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
-	public void getResourcesByResTypeId() throws Exception {
-		List<Resource> resources = this.resourceService.getResourcesByResTypeId(dummyResourceType.getId());
-
-		assertNotEquals(null, resources.get(0).getId());
-	}
-
-	@Test
-	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
-	@Transactional
 	public void getResourceByResTypeName() throws Exception {
 		PageResourceDto pageResources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName(), 0, 10);
 
