@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.open.numberManagement.dto.DtoMapper;
+import com.open.numberManagement.dto.entity.PageResourceDto;
 import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
@@ -60,23 +62,11 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(value = "resTypeName/{resTypeName}", method = RequestMethod.GET)
-	public List<ResourceDto> getResourcesByResTypeName(@PathVariable("resTypeName") String resTypeName,
+	public PageResourceDto getResourcesByResTypeName(@PathVariable("resTypeName") String resTypeName,
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
 			@RequestParam(required = false, defaultValue = "10", name = "pageSize") int pageSize) {
 		
-		List<Resource> resources = resourceService.getResourcesByResTypeName(resTypeName);
-		List<ResourceDto> resourceDtos = dtoMapper.map(resources, ResourceDto.class);
-		
-		resourceDtos.forEach(new Consumer<ResourceDto>() {
-
-			@Override
-			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-			}
-		});
-			
-		
-		return resourceDtos;
+		return resourceService.getResourcesByResTypeName(resTypeName, pageNumber, pageSize);
 	}
 	
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)

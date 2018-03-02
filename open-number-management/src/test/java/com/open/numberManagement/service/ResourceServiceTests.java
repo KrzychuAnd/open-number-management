@@ -14,10 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.open.numberManagement.dto.entity.PageResourceDto;
 import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceStatus;
 import com.open.numberManagement.entity.ResourceType;
@@ -103,9 +107,9 @@ public class ResourceServiceTests {
 	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
 	public void getResourceByResTypeName() throws Exception {
-		List<Resource> resources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName());
+		PageResourceDto pageResources = this.resourceService.getResourcesByResTypeName(dummyResourceType.getName(), 0, 10);
 
-		assertNotEquals(null, resources.get(0).getId());
+		assertNotEquals(null, pageResources.getResources().get(0).getId());
 	}
 
 	@Test

@@ -5,6 +5,7 @@ import com.open.numberManagement.entity.Resource;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -36,7 +37,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer>, Jp
 	
 	@Description(value = "Get Resources by Resource Type Name")
 	@Query("select r from Resource r, ResourceType rt where r.resTypeId = rt.id and rt.name = :resTypeName")
-	Optional<List<Resource>> getResourcesByResTypeName(@Param("resTypeName") String resTypeName);	
+	Optional<Page<Resource>> getResourcesByResTypeName(@Param("resTypeName") String resTypeName, Pageable pageable);	
 
 	@Description(value = "Get Max Resource number by Resource Type ID")
 	@Query("select max(cast(r.name as long)) from Resource r where r.resTypeId = :resTypeId")

@@ -26,6 +26,8 @@ import static com.open.numberManagement.util.Constants.ERR_RESOURCE_GENERATE_MAX
 import org.springframework.transaction.annotation.Transactional;
 
 import com.open.numberManagement.dto.DtoMapper;
+import com.open.numberManagement.dto.entity.PageDto;
+import com.open.numberManagement.dto.entity.PageResourceDto;
 import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourceResultDto;
@@ -49,6 +51,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -117,12 +120,31 @@ public class ResourceService {
 				.orElseThrow(() -> new ResourceNotFoundException(resTypeId, true));
 	}
 
-	public List<Resource> getResourcesByResTypeName(String resTypeName) {
+	public PageResourceDto getResourcesByResTypeName(String resTypeName, int pageNumber, int pageSize) {
 		if (loggedUserHasNoAccessToResourceType(resTypeName))
 			throw new UserNoAccessToResourceTypeException(resTypeName);
 
-		return this.resourceRepository.getResourcesByResTypeName(resTypeName)
+		Page<Resource> resources = this.resourceRepository
+				.getResourcesByResTypeName(resTypeName,
+						new PageRequest(pageNumber, pageSize, Sort.Direction.ASC, "name"))
 				.orElseThrow(() -> new ResourceNotFoundException(resTypeName, true));
+
+		List<ResourceDto> resourceDtos = dtoMapper.map(resources.getContent(), ResourceDto.class);
+
+		resourceDtos.forEach(new Consumer<ResourceDto>() {
+
+			@Override
+			public void accept(ResourceDto resourceDto) {
+				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+			}
+		});
+
+		PageResourceDto pageResourceDto = new PageResourceDto();
+		pageResourceDto.setResources(resourceDtos);
+		pageResourceDto.setPage(new PageDto(resources.getSize(), resources.getTotalElements(),
+				resources.getTotalPages(), resources.getNumber(), resources.getNumberOfElements()));
+
+		return pageResourceDto;
 	}
 
 	public ResourcesDto addResources(ResourcesDto resourcesDto) {
@@ -280,15 +302,17 @@ public class ResourceService {
 
 	@Transactional
 	public List<ResourceDto> reserveResources(ResourceGenerateDto resourceGenerateDto) {
-		ResourceStatus availableResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
+		ResourceStatus availableResourceStatus = resourceStatusService
+				.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
 		ResourceStatus reservedResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RESERVED);
 
 		if (loggedUserHasNoAccessToResourceType(resourceGenerateDto.getResTypeId()))
 			throw new UserNoAccessToResourceTypeException(resourceGenerateDto.getResTypeId());
-		
-		evaluateResultOfValidation(isAllowedStatusTransition(availableResourceStatus.getId(), reservedResourceStatus.getId()),
+
+		evaluateResultOfValidation(
+				isAllowedStatusTransition(availableResourceStatus.getId(), reservedResourceStatus.getId()),
 				availableResourceStatus.getId(), reservedResourceStatus.getId(), resourceGenerateDto.getResTypeId());
-		
+
 		List<Resource> resources = resourceRepository
 				.getResourcesByResTypeAndStatusId(resourceGenerateDto.getResTypeId(), availableResourceStatus.getId(),
 						new PageRequest(0, resourceGenerateDto.getNumber(), Sort.Direction.ASC, "name"))
@@ -298,7 +322,8 @@ public class ResourceService {
 
 			@Override
 			public void accept(Resource resource) {
-				ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(), reservedResourceStatus.getId());
+				ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(),
+						reservedResourceStatus.getId());
 				resourceHistoryService.addResourceHistory(resourceHistory);
 				resource.setResStatusId(reservedResourceStatus.getId());
 				resourceRepository.save(resource);
@@ -313,11 +338,11 @@ public class ResourceService {
 			@Override
 			public void accept(ResourceDto resourceDto) {
 				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-				
+
 			}
-			
+
 		});
-		
+
 		return resourcesDto;
 	}
 
