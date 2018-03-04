@@ -39,6 +39,7 @@ public class Constants {
 	public static final Integer ERR_RESOURCE_NAME_PREFIX_INVALID = 105;
 	public static final Integer ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED = 110;
 	public static final Integer ERR_RESOURCE_NOT_FOUND = 115;
+	public static final Integer ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS = 120;
 
 	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED = 150;
 	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS = 155;
@@ -55,14 +56,16 @@ public class Constants {
 	//Error messages
 	public static final String ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED_MSG = "Generate Maximum numbers exceeded. Limit is " + NUMBER_OF_RESOURCES_TO_GENERATE_LIMIT;
 	public static final String ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED_MSG = "Status transition from %s to %s is not allowed.";
-	public static final String ERR_RESOURCE_NAME_LENGTH_INVALID_MSG = "Resource name length is not valid. Proper length of Resource Type %s is %s.";
-	public static final String ERR_RESOURCE_NAME_PREFIX_INVALID_MSG = "Resource prefix is not valid. Propert perfix of Resource Type %s is %s.";
+	public static final String ERR_RESOURCE_NAME_LENGTH_INVALID_MSG = "The Resource name length is not valid. Proper length of Resource Type %s is %s.";
+	public static final String ERR_RESOURCE_NAME_PREFIX_INVALID_MSG = "The Resource prefix is not valid. Propert perfix of Resource Type %s is %s.";
 	public static final String ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS_MSG = "Maximum Resource number of '%s' Resource Type already exists.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_ID_MSG = "Could not find resource with id '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_NAME_MSG = "Could not find resource with name '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_MSG = "Could not find resource with resource type id '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG = "Could not find resource with resource type name '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_AND_RES_STAT_ID_NAME_MSG = "Could not find resource with resource type id %s and resource status id %s.";
+	public static final String ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG = "The Resource can not be in relation to itself!";
+	public static final String ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS = "Request Body consists of invalid parameter '%s'.";
 	
 	public static final String ERR_RESOURCE_STATUS_NOT_FOUND_MSG = "Could not find Resource Status with id %s.";
 	

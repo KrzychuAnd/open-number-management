@@ -6,7 +6,6 @@ import static com.open.numberManagement.util.Constants.RESOURCE_RESULT_NOK;
 import static com.open.numberManagement.util.Constants.RESOURCE_EMPTY_STATUS_ID;
 import static com.open.numberManagement.util.Constants.RESOURCE_RESULT_GENERATE_OK_WITH_WARNING;
 import static com.open.numberManagement.util.Constants.RESOURCE_GENERATE_RESULT_MSG;
-import static com.open.numberManagement.util.Constants.IS_VALID;
 import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_RETIRED;
 import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_AVAILABLE;
 import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_RESERVED;
@@ -23,6 +22,9 @@ import static com.open.numberManagement.util.Constants.ERR_RESOURCE_NAME_PREFIX_
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS;
 import static com.open.numberManagement.util.Constants.ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS_MSG;
 import static com.open.numberManagement.util.Constants.NULL_STRING;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS;
+import static com.open.numberManagement.util.Constants.ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -196,8 +199,7 @@ public class ResourceService {
 		if (loggedUserHasNoAccessToResourceType(resourcesDto.getResTypeId()))
 			throw new UserNoAccessToResourceTypeException(resourcesDto.getResTypeId());
 
-		evaluateResultOfValidation(isAllowedStatusTransition(RESOURCE_EMPTY_STATUS_ID, resourcesDto.getResStatusId()),
-				RESOURCE_EMPTY_STATUS_ID, resourcesDto.getResStatusId(), resourcesDto.getResTypeId());
+		isAllowedStatusTransition(RESOURCE_EMPTY_STATUS_ID, resourcesDto.getResStatusId());
 
 		maxname = resourceType.getPrefix() + StringUtils.leftPad("9",
 				(resourceType.getLength() - String.valueOf(resourceType.getPrefix()).length()), "9");
@@ -255,12 +257,11 @@ public class ResourceService {
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 
-		evaluateResultOfValidation(
-				isValidAgainstBusinessRules(resource, RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId()),
-				RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId(), resource.getResTypeId());
+		isValidAgainstBusinessRules(resource, RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId());
 
 		this.resourceRepository.save(resource);
-		resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId(), null, resource.getRelResId());
+		resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId(),
+				null, resource.getRelResId());
 		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		return resource;
 	}
@@ -282,8 +283,7 @@ public class ResourceService {
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 
-		evaluateResultOfValidation(isValidAgainstBusinessRules(resource, resource.getResStatusId(), retiredStatusId),
-				resource.getResStatusId(), retiredStatusId, resource.getResTypeId());
+		isValidAgainstBusinessRules(resource, resource.getResStatusId(), retiredStatusId);
 
 		ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(),
 				retiredStatusId);
@@ -293,53 +293,64 @@ public class ResourceService {
 		this.resourceRepository.save(resource);
 		return resource;
 	}
-	
+
 	@Transactional
-	public ResourceDto patchResource(Integer id, Map<String, Object> updates) { 
-		Resource resource = this.getResourceById(id); 
+	public ResourceDto patchResource(Integer id, Map<String, Object> updates) {
+		Resource resource = this.getResourceById(id);
 		ResourceHistory resourceHistory = new ResourceHistory();
-		
+
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
-		
+
 		resourceHistory.setResId(id);
 		resourceHistory.setSourceStatusId(resource.getResStatusId());
 		resourceHistory.setTargetStatusId(resource.getResStatusId());
 		resourceHistory.setOldRelResId(resource.getRelResId());
 		resourceHistory.setNewRelResId(resource.getRelResId());
-		
-		updates.forEach((k,v) -> {
-			String value = (String) v;
+
+		for (Map.Entry<String, Object> entry : updates.entrySet()) {
+			String key = entry.getKey();
+			String value = (String) entry.getValue();
 			Integer iValue = null;
-			switch(k) {
-				case "relResId":
-					if(!value.equals(NULL_STRING)) {
-						iValue = Integer.valueOf(value);
-					}
+
+			switch (key) {
+			case "relResId":
+				if (!value.equals(NULL_STRING)) {
+					iValue = Integer.valueOf(value);
 					Resource relResource = this.getResourceById(iValue);
-					resource.setRelResId(iValue);	
-					resourceHistory.setNewRelResId(iValue);
-					break;
-				case "resStatusId":
-					if(!value.equals(NULL_STRING)) {
-						iValue = Integer.valueOf(value);
-					}
-					Integer result = isAllowedStatusTransition(resource.getResStatusId(), iValue);
 					
-					evaluateResultOfValidation(result, resource.getResStatusId(), iValue, resource.getResTypeId());
-					
-					resource.setResStatusId(iValue);
-					resourceHistory.setTargetStatusId(iValue);
-					break;
-				case "descr":
-					resource.setDescr(value);
-					break;
+					if (iValue.equals(resource.getId()))
+						throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS,
+								String.format(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG));
+				}
+				resource.setRelResId(iValue);
+				resourceHistory.setNewRelResId(iValue);
+				break;
+			case "resStatusId":
+				if (!value.equals(NULL_STRING)) {
+					iValue = Integer.valueOf(value);
+				}
+				isAllowedStatusTransition(resource.getResStatusId(), iValue);
+
+				resource.setResStatusId(iValue);
+				resourceHistory.setTargetStatusId(iValue);
+				break;
+			case "descr":
+				resource.setDescr(value);
+				break;
+			default:
+				try {
+					resource.getClass().getField(key);
+				} catch (NoSuchFieldException e) {
+					throw new HttpMessageNotReadableException(
+							String.format(ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS, key));
+				}
 			}
-		});
-		
+		}
+
 		resourceHistoryService.addResourceHistory(resourceHistory);
 		resourceRepository.save(resource);
-		
+
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
 		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
 		return resourceDto;
@@ -354,14 +365,13 @@ public class ResourceService {
 		if (loggedUserHasNoAccessToResourceType(resourceGenerateDto.getResTypeId()))
 			throw new UserNoAccessToResourceTypeException(resourceGenerateDto.getResTypeId());
 
-		evaluateResultOfValidation(
-				isAllowedStatusTransition(availableResourceStatus.getId(), reservedResourceStatus.getId()),
-				availableResourceStatus.getId(), reservedResourceStatus.getId(), resourceGenerateDto.getResTypeId());
+		isAllowedStatusTransition(availableResourceStatus.getId(), reservedResourceStatus.getId());
 
 		List<Resource> resources = resourceRepository
 				.getResourcesByResTypeAndStatusId(resourceGenerateDto.getResTypeId(), availableResourceStatus.getId(),
 						new PageRequest(0, resourceGenerateDto.getNumber(), Sort.Direction.ASC, "name"))
-				.orElseThrow(() -> new ResourceNotFoundException(resourceGenerateDto.getResTypeId(), availableResourceStatus.getId()));
+				.orElseThrow(() -> new ResourceNotFoundException(resourceGenerateDto.getResTypeId(),
+						availableResourceStatus.getId()));
 
 		resources.forEach(new Consumer<Resource>() {
 
@@ -417,60 +427,53 @@ public class ResourceService {
 				&& !resourceType.getAuthorities().isEmpty());
 	}
 
-	private void evaluateResultOfValidation(Integer result, Integer sourceStatusId, Integer targetStatusId,
-			Integer resourceTypeId) {
-		ResourceStatus sourceStatus = resourceStatusService.getResourceStatusById(sourceStatusId);
-		ResourceStatus targetStatus = resourceStatusService.getResourceStatusById(targetStatusId);
-		ResourceType resourceType = resourceTypeService.getResourceType(resourceTypeId);
+	private void isValidAgainstBusinessRules(Resource resource, Integer sourceStatusId, Integer targetStatusId) {
 
-		if (result == ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED) {
-			throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED,
-					String.format(ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED_MSG, sourceStatus.getName(),
-							targetStatus.getName()));
+		checkResourceNameLength(resource);
 
-		} else if (result == ERR_RESOURCE_NAME_PREFIX_INVALID) {
-			throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_NAME_PREFIX_INVALID, String
-					.format(ERR_RESOURCE_NAME_PREFIX_INVALID_MSG, resourceType.getName(), resourceType.getPrefix()));
-		} else if (result == ERR_RESOURCE_NAME_LENGTH_INVALID) {
+		checkResourceNamePrefix(resource);
+
+		isAllowedStatusTransition(sourceStatusId, targetStatusId);
+	}
+
+	// Check if length of Resource.name equals ResourceType.length
+	private void checkResourceNameLength(Resource resource) {
+		ResourceType resourceType = this.getResourceType(resource);
+
+		if (resource.getName().length() != resourceType.getLength()) {
+			// return ERR_RESOURCE_NAME_LENGTH_INVALID;
 			throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_NAME_LENGTH_INVALID, String
 					.format(ERR_RESOURCE_NAME_LENGTH_INVALID_MSG, resourceType.getName(), resourceType.getLength()));
 		}
 	}
 
-	private Integer isValidAgainstBusinessRules(Resource resource, Integer sourceStatusId, Integer targetStatusId) {
+	// Check if prefix of Resource.name equals ResourceType.prefix
+	private void checkResourceNamePrefix(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);
-		Resource relResource;
-		
-		if (resource.getRelResId() != null)
-			relResource = this.getResourceById(resource.getRelResId());
-		
-		// Check if length of Resource.name equals ResourceType.length
-		if (resource.getName().length() != resourceType.getLength()) {
-			return ERR_RESOURCE_NAME_LENGTH_INVALID;
-		}
-		// Check if prefix of Resource.name equals ResourceType.prefix
-		if (!resource.getName().startsWith("" + resourceType.getPrefix())) {
-			return ERR_RESOURCE_NAME_PREFIX_INVALID;
-		}
 
-		return isAllowedStatusTransition(sourceStatusId, targetStatusId);
+		if (!resource.getName().startsWith("" + resourceType.getPrefix())) {
+			throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_NAME_PREFIX_INVALID, String
+					.format(ERR_RESOURCE_NAME_PREFIX_INVALID_MSG, resourceType.getName(), resourceType.getPrefix()));
+		}
 	}
 
 	// Check if Resource Status Transition is allowed
-	private Integer isAllowedStatusTransition(Integer sourceStatusId, Integer targetStatusId) {
+	private void isAllowedStatusTransition(Integer sourceStatusId, Integer targetStatusId) {
 
+		ResourceStatus sourceResourceStatus = resourceStatusService.getResourceStatusById(sourceStatusId);
 		ResourceStatus targetResourceStatus = resourceStatusService.getResourceStatusById(targetStatusId);
-		
+
 		if (sourceStatusId == targetStatusId)
-			return IS_VALID;
+			return;
 
 		List<ResourceStatus> targetResourceStatues = resourceLifecycleService
 				.getTargetStatusesBySourceStatusId(sourceStatusId);
 		if (targetResourceStatues == null | !targetResourceStatues.contains(targetResourceStatus)) {
-			return ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED;
+			throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED,
+					String.format(ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED_MSG, sourceResourceStatus.getName(),
+							targetResourceStatus.getName()));
 		}
 
-		return IS_VALID;
 	}
 
 	private Long getMaxResourceNumberByResTypeId(Integer resTypeId) {
