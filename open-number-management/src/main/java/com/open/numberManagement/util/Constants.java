@@ -62,6 +62,7 @@ public class Constants {
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_NAME_MSG = "Could not find resource with name '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_MSG = "Could not find resource with resource type id '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG = "Could not find resource with resource type name '%s'.";
+	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_AND_RES_STAT_ID_NAME_MSG = "Could not find resource with resource type id %s and resource status id %s.";
 	
 	public static final String ERR_RESOURCE_STATUS_NOT_FOUND_MSG = "Could not find Resource Status with id %s.";
 	
@@ -80,5 +81,8 @@ public class Constants {
 	//Info messages
 	public static final String INFO_RESOURCE_AUTO_GENERATED = "Resource automatically generated via REST API";
 	public static final String INFO_RESOURCE_ADDED_WITH_SUCCESS = "Resource added";
+	
+	//Others
+	public static final String NULL_STRING = "null";
 	
 }

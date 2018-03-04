@@ -6,11 +6,14 @@ import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,6 +101,12 @@ public class ResourceController {
 		uri = uriBuilder.requestUriWithId(resource.getId());
 
 		return created(uri).build();
+	}
+	
+	@PatchMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResourceDto patchResource(@PathVariable("id") Integer id, @RequestBody Map<String, Object> updates) {
+		return resourceService.patchResource(id, updates);
 	}
 
 	@RequestMapping(value= "many", method = RequestMethod.POST)

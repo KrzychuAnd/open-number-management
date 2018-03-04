@@ -107,8 +107,10 @@ CREATE TABLE `Permissions2ResourceType` (
 CREATE TABLE `Resource_History` (
 	`id` int NOT NULL AUTO_INCREMENT,
 	`res_id` int NOT NULL,
-	`source_status_id` int NOT NULL DEFAULT 0,
+	`source_status_id` int NOT NULL DEFAULT '0',
 	`target_status_id` int NOT NULL,
+	`old_rel_res_id` int,
+	`new_rel_res_id` int,
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
@@ -166,5 +168,9 @@ ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk1` FOREIGN KEY
 
 ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk2` FOREIGN KEY (`target_status_id`) REFERENCES `Resource_Status`(`id`);
 
-ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk3` FOREIGN KEY (`row_added_user`) REFERENCES `Users`(`login`);
+ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk3` FOREIGN KEY (`old_rel_res_id`) REFERENCES `Resource`(`id`);
+
+ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk4` FOREIGN KEY (`new_rel_res_id`) REFERENCES `Resource`(`id`);
+
+ALTER TABLE `Resource_History` ADD CONSTRAINT `Resource_History_fk5` FOREIGN KEY (`row_added_user`) REFERENCES `Users`(`login`);
 

@@ -29,6 +29,8 @@ public class ResourceHistory implements java.io.Serializable {
 	private int resId;
 	private Integer sourceStatusId;
 	private int targetStatusId;
+	private Integer oldRelResId;
+	private Integer newRelResId;
 	private String rowAddedUser;
 	private Date rowAddedDttm = new Date();
 
@@ -41,10 +43,20 @@ public class ResourceHistory implements java.io.Serializable {
 		this.targetStatusId = targetStatusId;
 	}
 	
-	public ResourceHistory(int resId, int sourceStatusId, int targetStatusId, String rowAddedUser, Date rowAddedDttm) {
+	public ResourceHistory(int resId, Integer sourceStatusId, int targetStatusId, Integer oldRelResId, Integer newRelResId) {
 		this.resId = resId;
 		this.sourceStatusId = sourceStatusId;
 		this.targetStatusId = targetStatusId;
+		this.oldRelResId = oldRelResId;
+		this.newRelResId = newRelResId;
+	}
+	
+	public ResourceHistory(int resId, int sourceStatusId, int targetStatusId, Integer oldRelResId, Integer newRelResId, String rowAddedUser, Date rowAddedDttm) {
+		this.resId = resId;
+		this.sourceStatusId = sourceStatusId;
+		this.targetStatusId = targetStatusId;
+		this.oldRelResId = oldRelResId;
+		this.newRelResId = newRelResId;
 		this.rowAddedUser = rowAddedUser;
 		this.rowAddedDttm = rowAddedDttm;
 	}
@@ -87,6 +99,24 @@ public class ResourceHistory implements java.io.Serializable {
 	public void setTargetStatusId(int targetStatusId) {
 		this.targetStatusId = targetStatusId;
 	}
+	
+	@Column(name = "old_rel_res_id", nullable = true)
+	public Integer getOldRelResId() {
+		return oldRelResId;
+	}
+
+	public void setOldRelResId(Integer oldRelResId) {
+		this.oldRelResId = oldRelResId;
+	}
+
+	@Column(name = "new_rel_res_id", nullable = true)
+	public Integer getNewRelResId() {
+		return newRelResId;
+	}
+
+	public void setNewRelResId(Integer newRelResId) {
+		this.newRelResId = newRelResId;
+	}	
 
 	@CreatedBy
 	@Column(name = "row_added_user", nullable = false, length = 50)
