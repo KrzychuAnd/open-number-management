@@ -111,6 +111,8 @@ CREATE TABLE `Resource_History` (
 	`target_status_id` int NOT NULL,
 	`old_rel_res_id` int,
 	`new_rel_res_id` int,
+	`old_descr` varchar(200),
+	`new_descr` varchar(200),	
 	`row_added_user` varchar(50) NOT NULL,
 	`row_added_dttm` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)

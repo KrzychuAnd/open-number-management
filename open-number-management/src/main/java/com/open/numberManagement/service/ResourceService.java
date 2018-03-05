@@ -232,7 +232,7 @@ public class ResourceService {
 
 			this.resourceRepository.save(resource);
 			resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID,
-					resource.getResStatusId());
+					resource.getResStatusId(), null, null, null, resource.getDescr());
 			this.resourceHistoryService.addResourceHistory(resourceHistory);
 
 			ResourceResultDto resourceResultDto = dtoMapper.map(resource, ResourceResultDto.class);
@@ -261,7 +261,7 @@ public class ResourceService {
 
 		this.resourceRepository.save(resource);
 		resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId(),
-				null, resource.getRelResId());
+				null, resource.getRelResId(), null, resource.getDescr());
 		this.resourceHistoryService.addResourceHistory(resourceHistory);
 		return resource;
 	}
@@ -307,6 +307,8 @@ public class ResourceService {
 		resourceHistory.setTargetStatusId(resource.getResStatusId());
 		resourceHistory.setOldRelResId(resource.getRelResId());
 		resourceHistory.setNewRelResId(resource.getRelResId());
+		resourceHistory.setOldDescr(resource.getDescr());
+		resourceHistory.setNewDescr(resource.getDescr());
 
 		for (Map.Entry<String, Object> entry : updates.entrySet()) {
 			String key = entry.getKey();
@@ -318,7 +320,7 @@ public class ResourceService {
 				if (!value.equals(NULL_STRING)) {
 					iValue = Integer.valueOf(value);
 					Resource relResource = this.getResourceById(iValue);
-					
+
 					if (iValue.equals(resource.getId()))
 						throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS,
 								String.format(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG));
@@ -336,6 +338,7 @@ public class ResourceService {
 				resourceHistory.setTargetStatusId(iValue);
 				break;
 			case "descr":
+				resourceHistory.setNewDescr(value);
 				resource.setDescr(value);
 				break;
 			default:
@@ -429,6 +432,8 @@ public class ResourceService {
 
 	private void isValidAgainstBusinessRules(Resource resource, Integer sourceStatusId, Integer targetStatusId) {
 
+		checkRelatedResourceExists(resource);
+
 		checkResourceNameLength(resource);
 
 		checkResourceNamePrefix(resource);
@@ -436,6 +441,14 @@ public class ResourceService {
 		isAllowedStatusTransition(sourceStatusId, targetStatusId);
 	}
 
+	//Check if related Resource exists
+	private void checkRelatedResourceExists(Resource resource) {
+		Resource relResource;
+
+		if (resource.getRelResId() != null)
+			relResource = this.getResourceById(resource.getRelResId());
+	}
+	
 	// Check if length of Resource.name equals ResourceType.length
 	private void checkResourceNameLength(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);

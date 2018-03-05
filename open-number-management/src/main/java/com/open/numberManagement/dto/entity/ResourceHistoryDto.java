@@ -16,5 +16,7 @@ public class ResourceHistoryDto {
 	private int targetStatusId;
 	private Integer oldRelResId;
 	private Integer newRelResId;	
+	private String oldDescr;
+	private String newDescr;	
 
 }

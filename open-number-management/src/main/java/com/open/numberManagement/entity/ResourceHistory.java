@@ -24,13 +24,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "resource_history", catalog = "openNM")
 public class ResourceHistory implements java.io.Serializable {
-	
+
 	private Integer id;
 	private int resId;
 	private Integer sourceStatusId;
 	private int targetStatusId;
 	private Integer oldRelResId;
 	private Integer newRelResId;
+	private String oldDescr;
+	private String newDescr;
 	private String rowAddedUser;
 	private Date rowAddedDttm = new Date();
 
@@ -42,16 +44,29 @@ public class ResourceHistory implements java.io.Serializable {
 		this.sourceStatusId = sourceStatusId;
 		this.targetStatusId = targetStatusId;
 	}
-	
-	public ResourceHistory(int resId, Integer sourceStatusId, int targetStatusId, Integer oldRelResId, Integer newRelResId) {
+
+	public ResourceHistory(int resId, Integer sourceStatusId, int targetStatusId, Integer oldRelResId,
+			Integer newRelResId) {
 		this.resId = resId;
 		this.sourceStatusId = sourceStatusId;
 		this.targetStatusId = targetStatusId;
 		this.oldRelResId = oldRelResId;
 		this.newRelResId = newRelResId;
 	}
-	
-	public ResourceHistory(int resId, int sourceStatusId, int targetStatusId, Integer oldRelResId, Integer newRelResId, String rowAddedUser, Date rowAddedDttm) {
+
+	public ResourceHistory(int resId, Integer sourceStatusId, int targetStatusId, Integer oldRelResId,
+			Integer newRelResId, String oldDescr, String newDescr) {
+		this.resId = resId;
+		this.sourceStatusId = sourceStatusId;
+		this.targetStatusId = targetStatusId;
+		this.oldRelResId = oldRelResId;
+		this.newRelResId = newRelResId;
+		this.oldDescr = oldDescr;
+		this.newDescr = newDescr;
+	}
+
+	public ResourceHistory(int resId, int sourceStatusId, int targetStatusId, Integer oldRelResId, Integer newRelResId,
+			String rowAddedUser, Date rowAddedDttm, String oldDescr, String newDescr) {
 		this.resId = resId;
 		this.sourceStatusId = sourceStatusId;
 		this.targetStatusId = targetStatusId;
@@ -59,6 +74,8 @@ public class ResourceHistory implements java.io.Serializable {
 		this.newRelResId = newRelResId;
 		this.rowAddedUser = rowAddedUser;
 		this.rowAddedDttm = rowAddedDttm;
+		this.oldDescr = oldDescr;
+		this.newDescr = newDescr;
 	}
 
 	@Id
@@ -99,7 +116,7 @@ public class ResourceHistory implements java.io.Serializable {
 	public void setTargetStatusId(int targetStatusId) {
 		this.targetStatusId = targetStatusId;
 	}
-	
+
 	@Column(name = "old_rel_res_id", nullable = true)
 	public Integer getOldRelResId() {
 		return oldRelResId;
@@ -116,7 +133,25 @@ public class ResourceHistory implements java.io.Serializable {
 
 	public void setNewRelResId(Integer newRelResId) {
 		this.newRelResId = newRelResId;
-	}	
+	}
+
+	@Column(name = "old_descr", nullable = true)
+	public String getOldDescr() {
+		return oldDescr;
+	}
+
+	public void setOldDescr(String oldDescr) {
+		this.oldDescr = oldDescr;
+	}
+
+	@Column(name = "new_descr", nullable = true)
+	public String getNewDescr() {
+		return newDescr;
+	}
+
+	public void setNewDescr(String newDescr) {
+		this.newDescr = newDescr;
+	}
 
 	@CreatedBy
 	@Column(name = "row_added_user", nullable = false, length = 50)
