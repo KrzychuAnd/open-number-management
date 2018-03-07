@@ -18,7 +18,13 @@ This document provides details of Open Number Management application REST API.
 |2018-02-12
 |Krzysztof Andryjowicz
 |Initial documentation of API
+
+|0.15
+|2018-03-05
+|Krzysztof Andryjowicz
+|Resource API documentation
 |===
+
 
 == 2. User management
 
@@ -50,14 +56,6 @@ This document provides details of Open Number Management application REST API.
 
 ==== 3.1.1. Add role
 
-HTTPie request:
-
-include::{snippets}/add-role/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/add-role/curl-request.adoc[]
-
 HTTP request:
 
 include::{snippets}/add-role/http-request.adoc[]
@@ -75,14 +73,6 @@ include::{snippets}/add-role/http-response.adoc[]
 include::{snippets}/add-role/response-fields.adoc[]
 
 ==== 3.1.2. Delete role
-
-HTTPie request:
-
-include::{snippets}/delete-role-by-id/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/delete-role-by-id/curl-request.adoc[]
 
 HTTP request:
 
@@ -102,14 +92,6 @@ include::{snippets}/delete-role-by-id/http-response.adoc[]
 
 ==== 3.1.4. Get role by id
 
-HTTPie request:
-
-include::{snippets}/get-role-by-id/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/get-role-by-id/curl-request.adoc[]
-
 HTTP request:
 
 include::{snippets}/get-role-by-id/http-request.adoc[]
@@ -127,14 +109,6 @@ include::{snippets}/get-role-by-id/http-response.adoc[]
 include::{snippets}/get-role-by-id/response-fields.adoc[]
 
 ==== 3.1.5. Get role by name
-
-HTTPie request:
-
-include::{snippets}/get-role-by-name/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/get-role-by-name/curl-request.adoc[]
 
 HTTP request:
 
@@ -158,14 +132,6 @@ include::{snippets}/get-role-by-name/response-fields.adoc[]
 
 ==== 3.2.1. Add permission
 
-HTTPie request:
-
-include::{snippets}/add-permission/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/add-permission/curl-request.adoc[]
-
 HTTP request:
 
 include::{snippets}/add-permission/http-request.adoc[]
@@ -183,14 +149,6 @@ include::{snippets}/add-permission/http-response.adoc[]
 include::{snippets}/add-permission/response-fields.adoc[]
 
 ==== 3.2.2. Delete permission
-
-HTTPie request:
-
-include::{snippets}/delete-permission-by-id/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/delete-permission-by-id/curl-request.adoc[]
 
 HTTP request:
 
@@ -210,14 +168,6 @@ include::{snippets}/delete-permission-by-id/http-response.adoc[]
 
 ==== 3.2.4. Get permission by id
 
-HTTPie request:
-
-include::{snippets}/get-permission-by-id/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/get-permission-by-id/curl-request.adoc[]
-
 HTTP request:
 
 include::{snippets}/get-permission-by-id/http-request.adoc[]
@@ -235,14 +185,6 @@ include::{snippets}/get-permission-by-id/http-response.adoc[]
 include::{snippets}/get-permission-by-id/response-fields.adoc[]
 
 ==== 3.2.5. Get permission by name
-
-HTTPie request:
-
-include::{snippets}/get-permission-by-name/httpie-request.adoc[]
-
-curl request:
-
-include::{snippets}/get-permission-by-name/curl-request.adoc[]
 
 HTTP request:
 
@@ -378,33 +320,113 @@ include::{snippets}/get-permission-by-name/response-fields.adoc[]
 
 ==== 7.1.1. Add resource
 
+
+===== 7.1.1.1. Add one resource
+
+[cols="1,4,2"]
+.Request Endpoint
+|===
+|Method|URL|Schema
+
+|POST|[base-url]/v1/resources|
+|===
+
+.Table Request Parameters
+
+include::{snippets}/add-resource/201/request-fields.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/add-resource/201/http-request.adoc[]
+
+[cols="1,2,4"]
+.Responses
+|===
+|HTTP Code|Description|Notes
+
+|201|Created|Resource created
+
+|400|Bad Request|Error in input, XSD failed validation, etc.
+
+|401|Unauthorized|Json Webtoken issue, e.g. invalid, missing, ...
+
+|403|Forbidden|Authorized user has no access to Resource Type
+
+|404|Client Error|Entity not found, e.g. Related Resource, Resource Status, Resource Type, ...
+
+|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or lenght of requested Resource Name
+
+|500|Server Error|Error in system not caused by invalid user data.
+|===
+
+====== HTTP Responses
+
+|===
+|HTTP Code|Description|Notes
+
+|201|Created|Resource created
+|===
+
+include::{snippets}/add-resource/201/http-response.adoc[]
+
+.Table Response Parameters
+
+[source,http,options="nowrap"]
+----
+NO RESPONSE BODY
+----
+
+|===
+|HTTP Code|Description|Notes
+
+|400|Bad Request|Error in input, XSD failed validation, etc.
+|===
+
+include::{snippets}/add-resource/400/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/add-resource/400/response-fields.adoc[]
+
+===== 7.1.1.1. Add many resources
+
+
+==== 7.1.2. Generate resources
+
+
+
+==== 7.1.3. Modify resource
+
+
+==== 7.1.3.1. Patch resource
+
+
+==== 7.1.3.2. Reserve resources
+
+
+==== 7.1.3.3. Retire resource
+
+
+==== 7.1.4. Get resources
+
+
+===== 7.1.4.1. Get resource by resource id
+
+
+===== 7.1.4.2. Get resource by resource name
+
+
+===== 7.1.4.3. Get resource by resource type id
+
+
+===== 7.1.4.4. Get resource by resource type name
+
+
+===== 7.1.4.5. Get resource by related resource id
+
 <TO DO>
 
-==== 7.1.2. Modify resource
-
-<TO DO>
-
-==== 7.1.3. Get resource by resource type id
-
-<TO DO>
-
-==== 7.1.4. Get resource by resource type name
-
-<TO DO>
-
-==== 7.1.5. Get resource by resource status id
-
-<TO DO>
-
-==== 7.1.6. Get resource by resource status name
-
-<TO DO>
-
-==== 7.1.7. Get resource by related resource id
-
-<TO DO>
-
-==== 7.1.8. Get resource by related resource name
+===== 7.1.4.6. Get resource by related resource name
 
 <TO DO>
 

@@ -13,6 +13,10 @@ public class Constants {
 	public static final String URL_VERSION_AND_RESOURCE_PATH = URL_VERSION_PATH + URL_RESOURCE_PATH;
 	public static final String URL_VERSION_AND_USER_PATH = URL_VERSION_PATH + URL_USER_PATH;
 	
+	//REST docs
+	public static final String DIRECTORY_GENERATED_SNIPPETS = "target/generated-snippets";
+	public static final String DIRECTORY_SNIPPET_ADD_RESOURCE_CREATED = "add-resource/201";
+	
 	//Limits
 	public static final Integer NUMBER_OF_RESOURCES_TO_GENERATE_LIMIT = 50;
 	

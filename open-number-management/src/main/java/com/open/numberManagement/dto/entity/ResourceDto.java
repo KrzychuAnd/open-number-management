@@ -9,11 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Data
 @Setter
 @Getter
+@NoArgsConstructor
 @XmlRootElement(name = "resource")
 public class ResourceDto {
 	
@@ -29,5 +31,13 @@ public class ResourceDto {
 	private String rowUpdatedUser;
 	
 	@XmlElement(name = "resourceHistories")
-	private Set<ResourceHistoryDto> resourceHistories = new HashSet<>();;
+	private Set<ResourceHistoryDto> resourceHistories = new HashSet<>();
+	
+	public ResourceDto(String name, int resTypeId, int resStatusId, String descr, Integer relResId ) {
+		this.name = name;
+		this.resTypeId = resTypeId;
+		this.resStatusId = resStatusId;
+		this.descr = descr;
+		this.relResId = relResId;
+	}
 }

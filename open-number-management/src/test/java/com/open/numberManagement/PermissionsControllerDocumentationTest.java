@@ -43,6 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.open.numberManagement.entity.Permission;
 import com.open.numberManagement.service.PermissionService;
+import com.open.numberManagement.restdocs.util.ConstrainedFields;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -86,10 +87,12 @@ public class PermissionsControllerDocumentationTest {
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(permission));
 
+		ConstrainedFields fields = new ConstrainedFields(Permission.class);
+		
 		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isCreated())
 				.andDo(document("add-permission",
-						(relaxedRequestFields(fieldWithPath("name").description("Name of Permission"),
-								fieldWithPath("descr").description("Description of Permission"))),
+						(relaxedRequestFields(fields.withPath("name").description("Name of Permission"),
+								fields.withPath("descr", "Optional").description("Description of Permission"))),
 						(relaxedResponseFields(fieldWithPath("name").description("Name of Permission"),
 								fieldWithPath("descr").description("Description of Permission"),
 								fieldWithPath("_links").description("Links to created resource")))));

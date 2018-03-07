@@ -41,7 +41,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.open.numberManagement.entity.Role;
-import com.open.numberManagement.service.RoleService;;
+import com.open.numberManagement.service.RoleService;
+import com.open.numberManagement.restdocs.util.ConstrainedFields;;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -85,10 +86,12 @@ public class RolesControllerDocumentationTest {
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(role));
 
+		ConstrainedFields fields = new ConstrainedFields(Role.class);
+		
 		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isCreated())
 				.andDo(document("add-role", 
-						(relaxedRequestFields(fieldWithPath("name").description("Name of Role"),
-								fieldWithPath("descr").description("Description of Role"))),
+						(relaxedRequestFields(fields.withPath("name").description("Name of Role"),
+								fields.withPath("descr", "Optional").description("Description of Role"))),
 						(relaxedResponseFields(fieldWithPath("name").description("Name of Role"),
 								fieldWithPath("descr").description("Description of Role"),
 								fieldWithPath("_links").description("Links to created resource")))));
