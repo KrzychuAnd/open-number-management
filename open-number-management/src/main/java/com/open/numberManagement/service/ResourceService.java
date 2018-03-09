@@ -39,6 +39,7 @@ import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceStatus;
 import com.open.numberManagement.entity.ResourceType;
+import com.open.numberManagement.exception.ResourceAlreadyExistsException;
 import com.open.numberManagement.exception.ResourceGenerateLimitNumberException;
 import com.open.numberManagement.exception.ResourceInvalidAgainstBusinessRulesException;
 import com.open.numberManagement.exception.ResourceNotFoundException;
@@ -253,6 +254,13 @@ public class ResourceService {
 	@Transactional
 	public Resource addResource(Resource resource) {
 		ResourceHistory resourceHistory;
+		
+		try {
+			if(getResourceByName(resource.getName()) != null)
+				throw new ResourceAlreadyExistsException(resource.getName());
+		}catch(ResourceNotFoundException e) {
+			//OK - Resource does not exists - do nothing
+		}
 
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());

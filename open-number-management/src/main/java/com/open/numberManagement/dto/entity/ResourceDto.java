@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import lombok.Data;
 import lombok.Getter;
@@ -21,9 +24,13 @@ public class ResourceDto {
 	
 	private Integer id;
 	private String href;
+	@NotBlank
 	private String name;
+	@Min(value=1, message="The value must be positive")
 	private int resTypeId;
+	@Min(value=1, message="The value must be positive")
 	private int resStatusId;
+	
 	private String descr;
 	private Integer relResId;
 	private String rowAddedUser;

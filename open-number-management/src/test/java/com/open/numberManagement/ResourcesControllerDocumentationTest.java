@@ -2,7 +2,6 @@ package com.open.numberManagement;
 
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static com.open.numberManagement.util.Constants.DIRECTORY_GENERATED_SNIPPETS;
-import static com.open.numberManagement.util.Constants.DIRECTORY_SNIPPET_ADD_RESOURCE_CREATED;
 import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_AVAILABLE;
 import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_PATH;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -115,7 +114,7 @@ public class ResourcesControllerDocumentationTest {
 	@Test
 	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
-	public void addResource() throws Exception {
+	public void addResourceCreated() throws Exception {
 
 		String name = dummyResourceType.getPrefix()
 				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
@@ -130,13 +129,69 @@ public class ResourcesControllerDocumentationTest {
 		ConstrainedFields fields = new ConstrainedFields(ResourceDto.class);
 
 		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isCreated())
-				.andDo(document(DIRECTORY_SNIPPET_ADD_RESOURCE_CREATED, (relaxedRequestFields(
-						fields.withPath("name").description(
-								"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
+				.andDo(document("{method-name}", (relaxedRequestFields(fields.withPath("name").description(
+						"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
+						fields.withPath("resTypeId").description("Resource Type ID"),
+						fields.withPath("resStatusId").description("Resource Status ID"),
+						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
+						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
+						(relaxedResponseFields(fieldWithPath("id").description("Resource OpenNM internal id"),
+								fieldWithPath("href").description("Direct URL to "),
+								fieldWithPath("name").description(
+										"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
+								fieldWithPath("resTypeId").description("Resource Type ID"),
+								fieldWithPath("resStatusId").description("Resource Status ID"),
+								fieldWithPath("relResId").description("Related Resource ID"),
+								fieldWithPath("descr").description("Description of Resource"),
+								fieldWithPath("resourceHistories").description(
+										"History of Resource initialy one entry with current values of Resource Status, Related Resource ID and Description")))));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
+	@Transactional
+	public void addResourceBadRequest() throws Exception {
+		ResourceDto resource = new ResourceDto("", dummyResourceType.getId(), availableResourceStatus.getId(),
+				"Some description", dummyResource.getId());
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/" + URL_VERSION_AND_RESOURCE_PATH)
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content("")
+				.content(objectMapper.writeValueAsString(resource));
+
+		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isBadRequest())
+				.andDo(document("{method-name}",
+						(relaxedResponseFields(fieldWithPath("timestamp").description("Server timestamp"),
+								fieldWithPath("status").description("HTTP Error Code"),
+								fieldWithPath("error").description("HTTP Error Message"),
+								fieldWithPath("exception").description("Server application exception"),
+								fieldWithPath("businessCode").description("Business Code of exception, please refer to Business Code list"),
+								fieldWithPath("message").description("More meaningfull exception message"),
+								fieldWithPath("path").description("URL path of requested HTTP resource")))));
+	}
+/*
+	@Test
+	@Transactional
+	public void addResourceUnauthorized() throws Exception {
+
+		String name = dummyResourceType.getPrefix()
+				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
+
+		ResourceDto resource = new ResourceDto(name, dummyResourceType.getId(), availableResourceStatus.getId(),
+				"Some description", dummyResource.getId());
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/" + URL_VERSION_AND_RESOURCE_PATH)
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(resource));
+
+		ConstrainedFields fields = new ConstrainedFields(ResourceDto.class);
+
+		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isUnauthorized())
+				.andDo(document("{method-name}", (relaxedRequestFields(fields.withPath("name").description(
+						"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
 						fields.withPath("resTypeId").description("Resource Type ID"),
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource")))));
 	}
-
+*/
 }

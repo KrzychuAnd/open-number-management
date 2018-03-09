@@ -8,13 +8,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class UserNoAccessToResourceException extends RuntimeException {
+public class UserNoAccessToResourceException extends OpenNMAbstractRuntimeException {
 
 	public UserNoAccessToResourceException(Integer resId) {
-		super(ERR_USER_NO_ACCESS_TO_RESOURCE + " - " + String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_ID_MSG, resId));
+		super(String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_ID_MSG, resId));
 	}
 	
 	public UserNoAccessToResourceException(String name) {
-		super(ERR_USER_NO_ACCESS_TO_RESOURCE + " - " + String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_NAME_MSG, name));
+		super(String.format(ERR_USER_NO_ACCESS_TO_RESOURCE_NAME_MSG, name));
+	}
+
+	@Override
+	protected void setCommonFields() {
+		this.setHttpStatus(HttpStatus.FORBIDDEN);
+		this.setBusinessCode(ERR_USER_NO_ACCESS_TO_RESOURCE);
 	}
 }

@@ -6,6 +6,8 @@ import com.open.numberManagement.entity.Resource;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.service.repository.ResourceHistoryRepository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,9 @@ public class ResourceHistoryService {
 	
 	public void deleteResourceHistoryByResId(Integer resourceId) {
 		this.resourceHistoryRepository.delete(this.resourceHistoryRepository.getResourceHistoriesByResId(resourceId));
+	}
+	
+	public List<ResourceHistory> getResourceHistory(Integer resourceId){
+		return this.resourceHistoryRepository.getResourceHistoriesByResId(resourceId);
 	}
 }

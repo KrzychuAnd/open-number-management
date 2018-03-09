@@ -5,19 +5,20 @@ import static org.springframework.http.ResponseEntity.noContent;
 import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_PATH;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,9 @@ import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceType;
+import com.open.numberManagement.service.ResourceHistoryService;
 import com.open.numberManagement.service.ResourceService;
 import com.open.numberManagement.service.ResourceTypeService;
 import com.open.numberManagement.util.UriBuilder;
@@ -39,18 +42,20 @@ public class ResourceController {
 
 	private ResourceService resourceService;
 	private ResourceTypeService resourceTypeService;
+	private ResourceHistoryService resourceHistoryService;
 	
 	private DtoMapper dtoMapper;
 	private UriBuilder uriBuilder = new UriBuilder();
 
 	@Autowired
-	public ResourceController(ResourceService resourceService, DtoMapper dtoMapper, ResourceTypeService resourceTypeService) {
+	public ResourceController(ResourceService resourceService, DtoMapper dtoMapper, ResourceTypeService resourceTypeService, ResourceHistoryService resourceHistoryService) {
 		this.resourceService = resourceService;
 		this.dtoMapper = dtoMapper;
 		this.resourceTypeService = resourceTypeService;
+		this.resourceHistoryService = resourceHistoryService;
 	}
 
-	@RequestMapping(value = "resTypeId/{resTypeId}", method = RequestMethod.GET)
+	@GetMapping(value = "resTypeId/{resTypeId}")
 	public PageResourceDto getResourcesByResTypeId(@PathVariable("resTypeId") Integer resTypeId,
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
 			@RequestParam(required = false, defaultValue = "10", name = "pageSize") int pageSize) {
@@ -60,7 +65,7 @@ public class ResourceController {
 		return resourceService.getResourcesByResTypeName(resourceType.getName(), pageNumber, pageSize);
 	}
 	
-	@RequestMapping(value = "resTypeName/{resTypeName}", method = RequestMethod.GET)
+	@GetMapping(value = "resTypeName/{resTypeName}")
 	public PageResourceDto getResourcesByResTypeName(@PathVariable("resTypeName") String resTypeName,
 			@RequestParam(required = false, defaultValue = "0", name = "pageNumber") int pageNumber,
 			@RequestParam(required = false, defaultValue = "10", name = "pageSize") int pageSize) {
@@ -68,7 +73,7 @@ public class ResourceController {
 		return resourceService.getResourcesByResTypeName(resTypeName, pageNumber, pageSize);
 	}
 	
-	@RequestMapping(value = "{id}", method = RequestMethod.GET)
+	@GetMapping(value = "{id}")
 	@ResponseBody
 	public ResourceDto getResource(@PathVariable("id") Integer id) {
 		Resource resource = resourceService.getResourceById(id);
@@ -79,7 +84,7 @@ public class ResourceController {
 		return resourceDto;
 	}
 	
-	@RequestMapping(value = "name/{name}", method = RequestMethod.GET)
+	@GetMapping(value = "name/{name}")
 	@ResponseBody
 	public ResourceDto getResource(@PathVariable("name") String name) {
 		Resource resource = resourceService.getResourceByName(name);
@@ -90,8 +95,9 @@ public class ResourceController {
 		return resourceDto;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Resource> addResource(@RequestBody ResourceDto resourceDto) {
+	@PostMapping
+	@ResponseBody
+	public ResponseEntity<ResourceDto> addResource(@Valid @RequestBody ResourceDto resourceDto) {
 		Resource resource = new Resource();
 		URI uri;
 		
@@ -99,8 +105,13 @@ public class ResourceController {
 
 		resource = resourceService.addResource(resource);
 		uri = uriBuilder.requestUriWithId(resource.getId());
-
-		return created(uri).build();
+		
+		resource.setResourceHistories(new HashSet<ResourceHistory> (resourceHistoryService.getResourceHistory(resource.getId())));
+		dtoMapper.map(resource, resourceDto);
+		
+		resourceDto.setHref(uri.toString());
+		
+		return created(uri).body(resourceDto);
 	}
 	
 	@PatchMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -109,7 +120,7 @@ public class ResourceController {
 		return resourceService.patchResource(id, updates);
 	}
 
-	@RequestMapping(value= "many", method = RequestMethod.POST)
+	@PostMapping(value= "many")
 	@ResponseBody
 	public ResourcesDto addResources(@RequestBody ResourcesDto resourcesDto) {
 		
@@ -118,14 +129,14 @@ public class ResourceController {
 		return resourcesDto;
 	}
 	
-	@RequestMapping(value = "retire/{name}", method = RequestMethod.PATCH)
+	@PatchMapping(value = "retire/{name}")
 	public ResponseEntity<Resource> retireResource(@PathVariable("name") String name) {
 		Resource resource = resourceService.retireResource(name);
 
 		return noContent().build();
 	}
 	
-	@RequestMapping(value= "generate", method = RequestMethod.POST)
+	@PostMapping(value= "generate")
 	@ResponseBody
 	public ResourcesDto generateResources(@RequestBody ResourceGenerateDto resourceGenerateDto) {
 		
@@ -134,7 +145,7 @@ public class ResourceController {
 		return resourcesDto;
 	}	
 	
-	@RequestMapping(value= "reserve", method = RequestMethod.PATCH)
+	@PatchMapping(value= "reserve")
 	@ResponseBody
 	public List<ResourceDto> reserveResources(@RequestBody ResourceGenerateDto resourceGenerateDto) {
 		

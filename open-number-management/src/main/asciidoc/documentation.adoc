@@ -333,11 +333,11 @@ include::{snippets}/get-permission-by-name/response-fields.adoc[]
 
 .Table Request Parameters
 
-include::{snippets}/add-resource/201/request-fields.adoc[]
+include::{snippets}/add-resource-created/request-fields.adoc[]
 
 Sample HTTP request:
 
-include::{snippets}/add-resource/201/http-request.adoc[]
+include::{snippets}/add-resource-created/http-request.adoc[]
 
 [cols="1,2,4"]
 .Responses
@@ -346,7 +346,7 @@ include::{snippets}/add-resource/201/http-request.adoc[]
 
 |201|Created|Resource created
 
-|400|Bad Request|Error in input, XSD failed validation, etc.
+|400|Bad Request|Error in input, JSON parse exception, etc.
 
 |401|Unauthorized|Json Webtoken issue, e.g. invalid, missing, ...
 
@@ -359,7 +359,7 @@ include::{snippets}/add-resource/201/http-request.adoc[]
 |500|Server Error|Error in system not caused by invalid user data.
 |===
 
-====== HTTP Responses
+====== HTTP Response
 
 |===
 |HTTP Code|Description|Notes
@@ -367,26 +367,21 @@ include::{snippets}/add-resource/201/http-request.adoc[]
 |201|Created|Resource created
 |===
 
-include::{snippets}/add-resource/201/http-response.adoc[]
+include::{snippets}/add-resource-created/http-response.adoc[]
 
 .Table Response Parameters
-
-[source,http,options="nowrap"]
-----
-NO RESPONSE BODY
-----
+include::{snippets}/add-resource-created/response-fields.adoc[]
 
 |===
 |HTTP Code|Description|Notes
 
-|400|Bad Request|Error in input, XSD failed validation, etc.
+|400|Bad Request|Error in input, JSON parse exception, etc.
 |===
 
-include::{snippets}/add-resource/400/http-response.adoc[]
+include::{snippets}/add-resource-bad-request/http-response.adoc[]
 
 .Table Response Parameters
-
-include::{snippets}/add-resource/400/response-fields.adoc[]
+include::{snippets}/add-resource-bad-request/response-fields.adoc[]
 
 ===== 7.1.1.1. Add many resources
 

@@ -15,7 +15,6 @@ public class Constants {
 	
 	//REST docs
 	public static final String DIRECTORY_GENERATED_SNIPPETS = "target/generated-snippets";
-	public static final String DIRECTORY_SNIPPET_ADD_RESOURCE_CREATED = "add-resource/201";
 	
 	//Limits
 	public static final Integer NUMBER_OF_RESOURCES_TO_GENERATE_LIMIT = 50;
@@ -37,14 +36,18 @@ public class Constants {
 	//Resource result messages
 	public static final String RESOURCE_GENERATE_RESULT_MSG = "Number of Resources created with success %s of %s requested.";
 	
-	//Error Codes
+	//Business Codes
 	public static final Integer IS_VALID = 0;
+	
+	public static final Integer ERR_BAD_REQUEST = -1;
+	
 	public static final Integer ERR_RESOURCE_NAME_LENGTH_INVALID = 100;
 	public static final Integer ERR_RESOURCE_NAME_PREFIX_INVALID = 105;
 	public static final Integer ERR_RESOURCE_STATUS_LIFECYCLE_IS_NOT_ALLOWED = 110;
 	public static final Integer ERR_RESOURCE_NOT_FOUND = 115;
 	public static final Integer ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS = 120;
-
+	public static final Integer ERR_RESOURCE_ALREADY_EXISTS = 125;
+	
 	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUMBER_EXCEEDED = 150;
 	public static final Integer ERR_RESOURCE_GENERATE_MAX_NUM_EXISTS = 155;
 	
@@ -69,6 +72,8 @@ public class Constants {
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_NAME_MSG = "Could not find resource with resource type name '%s'.";
 	public static final String ERR_RESOURCE_NOT_FOUND_RES_TYPE_ID_AND_RES_STAT_ID_NAME_MSG = "Could not find resource with resource type id %s and resource status id %s.";
 	public static final String ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG = "The Resource can not be in relation to itself!";
+	public static final String ERR_RESOURCE_ALREADY_EXISTS_NAME_MSG = "The Resource with name %s already exists!";
+	
 	public static final String ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS = "Request Body consists of invalid parameter '%s'.";
 	
 	public static final String ERR_RESOURCE_STATUS_NOT_FOUND_MSG = "Could not find Resource Status with id %s.";
