@@ -303,6 +303,60 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
 						(exceptionResponseFieldsSnippet())));
 	}
+	
+	@Test
+	@WithMockUser(username = ADMINISTRATOR_USER, authorities = { ADMINISTRATOR_PERMISSION })
+	@Transactional
+	public void addResourceClientError() throws Exception {
+
+		String name = dummyResourceType.getPrefix()
+				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
+
+		ResourceDto resource = new ResourceDto(name, dummyResourceType.getId(), availableResourceStatus.getId(),
+				DUMMY_DESCRIPTION, 12345678 /* Related Resource Id which do not exists */);
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/" + URL_VERSION_AND_RESOURCE_PATH)
+				.header("Authorization", "Bearer " + dummyUserAccessToken).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(resource));
+
+		ConstrainedFields fields = new ConstrainedFields(ResourceDto.class);
+
+		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().is4xxClientError())
+				.andDo(document("{method-name}", (relaxedRequestFields(fields.withPath("name").description(
+						"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
+						fields.withPath("resTypeId").description("Resource Type ID"),
+						fields.withPath("resStatusId").description("Resource Status ID"),
+						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
+						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
+						(exceptionResponseFieldsSnippet())));
+	}	
+	
+	@Test
+	@WithMockUser(username = ADMINISTRATOR_USER, authorities = { ADMINISTRATOR_PERMISSION })
+	@Transactional
+	public void addResourcePreconditionFailed() throws Exception {
+
+		String name = 1122 /* Invalid prefix */
+				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
+
+		ResourceDto resource = new ResourceDto(name, dummyResourceType.getId(), availableResourceStatus.getId(),
+				DUMMY_DESCRIPTION,  dummyResource.getId() );
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/" + URL_VERSION_AND_RESOURCE_PATH)
+				.header("Authorization", "Bearer " + dummyUserAccessToken).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(resource));
+
+		ConstrainedFields fields = new ConstrainedFields(ResourceDto.class);
+
+		this.mockMvc.perform(builder).andDo(print()).andExpect(MockMvcResultMatchers.status().isPreconditionFailed())
+				.andDo(document("{method-name}", (relaxedRequestFields(fields.withPath("name").description(
+						"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
+						fields.withPath("resTypeId").description("Resource Type ID"),
+						fields.withPath("resStatusId").description("Resource Status ID"),
+						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
+						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
+						(exceptionResponseFieldsSnippet())));
+	}		
 
 	private ResponseFieldsSnippet exceptionResponseFieldsSnippet() {
 		return relaxedResponseFields(fieldWithPath("timestamp").description("Server timestamp"),

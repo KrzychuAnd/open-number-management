@@ -356,7 +356,7 @@ include::{snippets}/add-resource-created/http-request.adoc[]
 
 |403|Forbidden|Authorized user has no access to requested Resource Type
 
-|404|Client Error|Entity not found, e.g. Related Resource, Resource Status, Resource Type, ...
+|404|Not Found|Entity not found, e.g. Related Resource, Resource Status, Resource Type, ...
 
 |412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or lenght of requested Resource Name
 
@@ -434,6 +434,48 @@ include::{snippets}/add-resource-forbidden/http-response.adoc[]
 
 .Table Response Parameters
 include::{snippets}/add-resource-forbidden/response-fields.adoc[]
+
+====== 404 - Not Found scenario
+
+.Table Request Parameters
+
+include::{snippets}/add-resource-client-error/request-fields.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/add-resource-client-error/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|404|Not Found|Entity not found, e.g. Related Resource, Resource Status, Resource Type, …​
+|===
+
+include::{snippets}/add-resource-client-error/http-response.adoc[]
+
+.Table Response Parameters
+include::{snippets}/add-resource-client-error/response-fields.adoc[]
+
+====== 412 - Precondition Failed scenario
+
+.Table Request Parameters
+
+include::{snippets}/add-resource-precondition-failed/request-fields.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/add-resource-precondition-failed/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or lenght of requested Resource Name​
+|===
+
+include::{snippets}/add-resource-precondition-failed/http-response.adoc[]
+
+.Table Response Parameters
+include::{snippets}/add-resource-precondition-failed/response-fields.adoc[]
 
 
 ===== 8.1.1.1. Add many resources
