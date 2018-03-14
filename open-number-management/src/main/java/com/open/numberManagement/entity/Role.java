@@ -64,14 +64,7 @@ public class Role implements Serializable {
     
     private Set<Permission> permissions =  new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = { 
-            CascadeType.PERSIST, 
-            CascadeType.MERGE
-        })
-        @JoinTable(name = "roles2permissions",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "perm_id")
-        )
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     public Set<Permission> getPermissions() {
 		return permissions;
 	}

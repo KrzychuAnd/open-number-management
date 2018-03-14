@@ -19,6 +19,9 @@ public class Constants {
 	//Limits
 	public static final Integer NUMBER_OF_RESOURCES_TO_GENERATE_LIMIT = 50;
 	
+	//Users
+	public static final String ADMINISTRATOR_USER = "admin";
+	
 	//Permissions
 	public static final String ADMINISTRATOR_PERMISSION = "ADMIN_PERM";
 	

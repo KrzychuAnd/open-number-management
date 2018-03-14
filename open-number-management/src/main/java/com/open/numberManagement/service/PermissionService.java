@@ -22,4 +22,8 @@ public class PermissionService {
 	public Permission getPermissionByName(String name) {
 		return this.permissionRepository.getPermissionByName(name);
 	}
+	
+	public Permission addPermission(Permission permission) {
+		return this.permissionRepository.save(permission);
+	}
 }

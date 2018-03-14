@@ -254,6 +254,9 @@ public class ResourceService {
 	@Transactional
 	public Resource addResource(Resource resource) {
 		ResourceHistory resourceHistory;
+
+		if (loggedUserHasNoAccessToResourceType(resource))
+			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 		
 		try {
 			if(getResourceByName(resource.getName()) != null)
@@ -261,9 +264,6 @@ public class ResourceService {
 		}catch(ResourceNotFoundException e) {
 			//OK - Resource does not exists - do nothing
 		}
-
-		if (loggedUserHasNoAccessToResourceType(resource))
-			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
 
 		isValidAgainstBusinessRules(resource, RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId());
 

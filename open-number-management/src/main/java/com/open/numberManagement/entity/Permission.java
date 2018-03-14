@@ -71,7 +71,14 @@ public class Permission implements GrantedAuthority {
 	private Date rowUpdatedDttm;
 
 	@JsonIgnore
-	@ManyToMany(mappedBy = "permissions")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { 
+            CascadeType.PERSIST, 
+            CascadeType.MERGE
+        })
+        @JoinTable(name = "roles2permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "perm_id")
+        )
 	private Set<Role> roles = new HashSet<>();
 	
     @ManyToMany(fetch = FetchType.EAGER, cascade = { 
