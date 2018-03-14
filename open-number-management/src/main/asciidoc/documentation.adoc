@@ -358,7 +358,7 @@ include::{snippets}/add-resource-created/http-request.adoc[]
 
 |404|Not Found|Entity not found, e.g. Related Resource, Resource Status, Resource Type, ...
 
-|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or lenght of requested Resource Name
+|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or length of requested Resource Name
 
 |500|Server Error|Error in system not caused by invalid user data.
 |===
@@ -469,7 +469,7 @@ include::{snippets}/add-resource-precondition-failed/http-request.adoc[]
 |===
 |HTTP Code|Description|Notes
 
-|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or lenght of requested Resource Name​
+|412|Precondition Failed|Provided data does not meet Business Requirements, e.g. Invalid prefix or length of requested Resource Name​
 |===
 
 include::{snippets}/add-resource-precondition-failed/http-response.adoc[]
@@ -502,6 +502,149 @@ include::{snippets}/add-resource-precondition-failed/response-fields.adoc[]
 
 ===== 8.1.4.1. Get resource by resource id
 
+[cols="1,4,2"]
+.Request Endpoint
+|===
+|Method|URL|Schema
+
+|GET|[base-url]/v1/resources|
+|===
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-ok/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-ok/http-request.adoc[]
+
+[cols="1,2,4"]
+.Possible Responses
+|===
+|HTTP Code|Description|Notes
+
+|200|OK|Resource retrieved
+
+|400|Bad Request|Invalid path parameter
+
+|401|Unauthorized|Json Webtoken issue, e.g. invalid, missing, ...
+
+|403|Forbidden|Authorized user has no access to requested Resource Type
+
+|404|Not Found|Resource Entity with requested id not found
+
+|500|Server Error|Error in system not caused by invalid user data.
+|===
+
+====== 200 - OK scenario
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-ok/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-ok/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|200|OK|Resource retrieved
+|===
+
+include::{snippets}/get-resource-by-id-ok/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-resource-by-id-ok/response-fields.adoc[]
+
+====== 400 - Bad Request scenario
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-bad-request/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-bad-request/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|400|Bad Request |Resource retrieved
+|===
+
+include::{snippets}/get-resource-by-id-bad-request/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-resource-by-id-bad-request/response-fields.adoc[]
+
+====== 401 - Unauthorized scenario
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-unauthorized/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-unauthorized/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|401|Unauthorized|Json Webtoken issue, e.g. invalid, missing, ...
+|===
+
+include::{snippets}/get-resource-by-id-unauthorized/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-resource-by-id-unauthorized/response-fields.adoc[]
+
+====== 403 - Forbidden scenario
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-forbidden/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-forbidden/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|403|Forbidden|Authorized user has no access to requested Resource Type
+|===
+
+include::{snippets}/get-resource-by-id-forbidden/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-resource-by-id-forbidden/response-fields.adoc[]
+
+====== 404 - Not Found scenario
+
+Path Parameters
+
+include::{snippets}/get-resource-by-id-not-found/path-parameters.adoc[]
+
+Sample HTTP request:
+
+include::{snippets}/get-resource-by-id-not-found/http-request.adoc[]
+
+|===
+|HTTP Code|Description|Notes
+
+|404|Not Found|Resource Entity with requested id not found
+|===
+
+include::{snippets}/get-resource-by-id-not-found/http-response.adoc[]
+
+.Table Response Parameters
+
+include::{snippets}/get-resource-by-id-not-found/response-fields.adoc[]
 
 ===== 8.1.4.2. Get resource by resource name
 

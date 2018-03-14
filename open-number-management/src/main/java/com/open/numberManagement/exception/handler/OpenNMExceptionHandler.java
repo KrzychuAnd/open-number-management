@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.open.numberManagement.exception.OpenNMAbstractRuntimeException;
@@ -42,6 +43,27 @@ public class OpenNMExceptionHandler {
 		
 		return exceptionResponse;
 	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public @ResponseBody OpenNMExceptionResponse handle(HttpServletResponse response, MethodArgumentTypeMismatchException exception) {
+		OpenNMExceptionResponse exceptionResponse = new OpenNMExceptionResponse();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri();
+		
+		HttpStatus status = Optional
+				.ofNullable(AnnotationUtils.getAnnotation(exception.getClass(), ResponseStatus.class))
+				.map(ResponseStatus::value).orElse(HttpStatus.BAD_REQUEST);
+		
+		response.setStatus(status.value());
+		
+		exceptionResponse.setStatus(status.value());
+		exceptionResponse.setError(status.getReasonPhrase());
+		exceptionResponse.setException(exception.getClass().getName());
+		exceptionResponse.setBusinessCode(ERR_BAD_REQUEST);
+		exceptionResponse.setMessage(exception.getMessage());
+		exceptionResponse.setPath(uri.getPath());		
+		
+		return exceptionResponse;
+	}	
 
 	@ExceptionHandler(OpenNMAbstractRuntimeException.class)
 	public @ResponseBody OpenNMExceptionResponse handle(HttpServletResponse response, OpenNMAbstractRuntimeException exception) {

@@ -1,4 +1,4 @@
-package com.open.numberManagement;
+package com.open.numberManagement.resources.add;
 
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_USER;
@@ -7,11 +7,6 @@ import static com.open.numberManagement.util.Constants.RESOURCE_STATUS_AVAILABLE
 import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_PATH;
 
 import static com.open.numberManagement.jUnit.Constants.DUMMY_DESCRIPTION;
-import static com.open.numberManagement.jUnit.Constants.DUMMY_PERMISSION_NAME;
-import static com.open.numberManagement.jUnit.Constants.DUMMY_RESOURCE_TYPE_NAME;
-import static com.open.numberManagement.jUnit.Constants.DUMMY_ROLE_NAME;
-import static com.open.numberManagement.jUnit.Constants.DUMMY_USER_FIRST_NAME;
-import static com.open.numberManagement.jUnit.Constants.DUMMY_USER_LAST_NAME;
 import static com.open.numberManagement.jUnit.Constants.DUMMY_USER_LOGIN;
 import static com.open.numberManagement.jUnit.Constants.DUMMY_USER_LOGIN_NO_PERM;
 import static com.open.numberManagement.jUnit.Constants.DUMMY_USER_PASSWORD;
@@ -24,9 +19,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -68,8 +60,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -138,6 +128,8 @@ public class ResourcesControllerDocumentationTest {
 	@Autowired
 	private UserService userService;
 
+	ControllerDocumentationTestUtil cdtUtil;
+	
 	private Role dummyRole;
 	private User dummyUser, dummyUserNoPerm;
 	private ResourceType dummyResourceType;
@@ -158,59 +150,35 @@ public class ResourcesControllerDocumentationTest {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).addFilter(springSecurityFilterChain)
 				.apply(documentationConfiguration(this.restDocumentation)).alwaysDo(documentationHandler).build();
 
-		ControllerDocumentationTestUtil cdtutil = new ControllerDocumentationTestUtil(this.mockMvc);
+		cdtUtil = new ControllerDocumentationTestUtil(this.mockMvc, permissionService,
+				roleService, userService, resourceTypeService, resourceService, resourceStatusService);
 
 		// Add dummy Permission
-		dummyPermission = new Permission(DUMMY_PERMISSION_NAME, "Dummy permission - access to Dummy Resource Type");
-		dummyPermission = this.permissionService.addPermission(dummyPermission);
+		dummyPermission = cdtUtil.createDummyPermission();
 
 		// Add Role
-		dummyRole = new Role(DUMMY_ROLE_NAME, DUMMY_ROLE_NAME);
-		Set<Permission> rolePermissions = new HashSet<>();
-		rolePermissions.add(dummyPermission);
-		dummyRole.setPermissions(rolePermissions);
-		dummyRole = roleService.addRole(dummyRole);
+		dummyRole = cdtUtil.createDummyRole(dummyPermission);
 
 		// Add dummy User
-		dummyUser = new User();
-		dummyUser.setLogin(DUMMY_USER_LOGIN);
-		dummyUser.setFirstName(DUMMY_USER_FIRST_NAME);
-		dummyUser.setLastName(DUMMY_USER_LAST_NAME);
-		dummyUser.setPassword(DUMMY_USER_PASSWORD);
-		dummyUser.setRoleId(dummyRole.getId());
-		dummyUser.setRole(dummyRole);
-		dummyUser.setLocked('N');
-		dummyUser = userService.addUser(dummyUser);
-
+		dummyUser = cdtUtil.createDummyUser(dummyRole, DUMMY_USER_LOGIN);
+		
 		// Add dummy User No permission
-		dummyUserNoPerm = new User();
-		dummyUserNoPerm.setLogin(DUMMY_USER_LOGIN_NO_PERM);
-		dummyUserNoPerm.setFirstName(DUMMY_USER_FIRST_NAME);
-		dummyUserNoPerm.setLastName(DUMMY_USER_LAST_NAME);
-		dummyUserNoPerm.setPassword(DUMMY_USER_PASSWORD);
-		dummyUserNoPerm.setRoleId(null);
-		dummyUserNoPerm.setLocked('N');
-		dummyUserNoPerm = userService.addUser(dummyUserNoPerm);
+		dummyUserNoPerm = cdtUtil.createDummyUser(null, DUMMY_USER_LOGIN_NO_PERM);
 
 		// Add dummy Resource type
-		Set<Permission> resourceTypePermissions = new HashSet<>();
-		resourceTypePermissions.add(dummyPermission);
-		dummyResourceType = new ResourceType(DUMMY_RESOURCE_TYPE_NAME, DUMMY_RESOURCE_TYPE_NAME, 10, 99, 300);
-		dummyResourceType.setPermissions(resourceTypePermissions);
-		dummyResourceType = this.resourceTypeService.addResourceType(dummyResourceType);
+		dummyResourceType = cdtUtil.createResourceType(dummyPermission);
 
 		// Get Available Resource status
 		availableResourceStatus = this.resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
 
 		// Add dummy Resource
-		dummyResource = new Resource("9912345678", dummyResourceType.getId(), availableResourceStatus.getId());
-		dummyResource = this.resourceService.addResource(dummyResource);
+		dummyResource = cdtUtil.createDummyResource(dummyResourceType, "9912345678");
 
 		// Obtain access token
 		try {
-			dummyUserAccessToken = cdtutil.obtainAccessToken(clientId, clientSecret, grantType, DUMMY_USER_LOGIN,
+			dummyUserAccessToken = cdtUtil.obtainAccessToken(clientId, clientSecret, grantType, DUMMY_USER_LOGIN,
 					DUMMY_USER_PASSWORD);
-			dummyUserNoPermAccessToken = cdtutil.obtainAccessToken(clientId, clientSecret, grantType,
+			dummyUserNoPermAccessToken = cdtUtil.obtainAccessToken(clientId, clientSecret, grantType,
 					DUMMY_USER_LOGIN_NO_PERM, DUMMY_USER_PASSWORD);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -243,16 +211,7 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
-						(relaxedResponseFields(fieldWithPath("id").description("Resource OpenNM internal id"),
-								fieldWithPath("href").description("Direct URL to "),
-								fieldWithPath("name").description(
-										"Name of Resource - have to be inline with Business rules related to requested Resource Type definition, e.g. prefix, length, ..."),
-								fieldWithPath("resTypeId").description("Resource Type ID"),
-								fieldWithPath("resStatusId").description("Resource Status ID"),
-								fieldWithPath("relResId").description("Related Resource ID"),
-								fieldWithPath("descr").description("Description of Resource"),
-								fieldWithPath("resourceHistories").description(
-										"History of Resource initialy one entry with current values of Resource Status, Related Resource ID and Description")))));
+						(cdtUtil.resourceResponseFieldsSnippet())));
 	}
 
 	@Test
@@ -274,7 +233,7 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
-						(exceptionResponseFieldsSnippet())));
+						(cdtUtil.exceptionResponseFieldsSnippet())));
 	}
 
 	@Test
@@ -301,9 +260,9 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
-						(exceptionResponseFieldsSnippet())));
+						(cdtUtil.exceptionResponseFieldsSnippet())));
 	}
-	
+
 	@Test
 	@WithMockUser(username = ADMINISTRATOR_USER, authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
@@ -328,9 +287,9 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
-						(exceptionResponseFieldsSnippet())));
-	}	
-	
+						(cdtUtil.exceptionResponseFieldsSnippet())));
+	}
+
 	@Test
 	@WithMockUser(username = ADMINISTRATOR_USER, authorities = { ADMINISTRATOR_PERMISSION })
 	@Transactional
@@ -340,7 +299,7 @@ public class ResourcesControllerDocumentationTest {
 				+ StringUtils.leftPad("999999", (dummyResourceType.getLength() - 2), "0");
 
 		ResourceDto resource = new ResourceDto(name, dummyResourceType.getId(), availableResourceStatus.getId(),
-				DUMMY_DESCRIPTION,  dummyResource.getId() );
+				DUMMY_DESCRIPTION, dummyResource.getId());
 
 		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/" + URL_VERSION_AND_RESOURCE_PATH)
 				.header("Authorization", "Bearer " + dummyUserAccessToken).contentType(MediaType.APPLICATION_JSON)
@@ -355,17 +314,7 @@ public class ResourcesControllerDocumentationTest {
 						fields.withPath("resStatusId").description("Resource Status ID"),
 						fields.withPath("relResId", "Optional").optional().description("Related Resource ID"),
 						fields.withPath("descr", "Optional").optional().description("Description of Resource"))),
-						(exceptionResponseFieldsSnippet())));
-	}		
-
-	private ResponseFieldsSnippet exceptionResponseFieldsSnippet() {
-		return relaxedResponseFields(fieldWithPath("timestamp").description("Server timestamp"),
-				fieldWithPath("status").description("HTTP Error Code"),
-				fieldWithPath("error").description("HTTP Error Message"),
-				fieldWithPath("exception").description("Server application exception"),
-				fieldWithPath("businessCode")
-						.description("Business Code of exception, please refer to Business Code list"),
-				fieldWithPath("message").description("More meaningfull exception message"),
-				fieldWithPath("path").description("URL path of requested HTTP resource"));
+						(cdtUtil.exceptionResponseFieldsSnippet())));
 	}
+
 }
