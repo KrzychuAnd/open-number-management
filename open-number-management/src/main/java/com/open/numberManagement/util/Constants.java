@@ -22,6 +22,9 @@ public class Constants {
 	//Users
 	public static final String ADMINISTRATOR_USER = "admin";
 	
+	//Roles
+	public static final String ADMINISTRATOR_ROLE = "ADMIN";
+	
 	//Permissions
 	public static final String ADMINISTRATOR_PERMISSION = "ADMIN_PERM";
 	

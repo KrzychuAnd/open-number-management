@@ -1,13 +1,18 @@
 package com.open.numberManagement.service.repository;
 
 import static com.open.numberManagement.util.Constants.ADMINISTRATOR_PERMISSION;
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_ROLE;
+
 import com.open.numberManagement.entity.ResourceType;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.Description;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +23,7 @@ import org.springframework.stereotype.Repository;
 */
 @Repository
 @PreAuthorize("hasAuthority('" + ADMINISTRATOR_PERMISSION + "')")
-public interface ResourceTypeRepository extends JpaRepository<ResourceType, Integer>, JpaSpecificationExecutor<ResourceType> {
+public interface ResourceTypeRepository extends JpaRepository<ResourceType, Integer>, JpaSpecificationExecutor<ResourceType>, PagingAndSortingRepository<ResourceType, Integer> {
 
 	@PreAuthorize("isAuthenticated()")
 	@Description(value = "Get Resource Type by Id")
@@ -29,4 +34,12 @@ public interface ResourceTypeRepository extends JpaRepository<ResourceType, Inte
 	@Description(value = "Get Resource Type by Name")
 	@Query("select rt from ResourceType rt where rt.name = :name")
 	Optional<ResourceType> getResourceTypeByName(@Param("name") String name);
+	
+	@PreAuthorize("isAuthenticated()")
+	@Description(value = "Get Resource Types by Role Id")
+	@Query("select res from ResourceType res where "
+			+ "id in (select rt.id from ResourceType rt, Permissions2resourcetype p2rt, Role2permission r2p where p2rt.id.resTypeId = rt.id and r2p.id.roleId = :roleId and p2rt.id.permId = r2p.id.roleId) "
+			+ "or id in (select rt.id from ResourceType rt where not exists(select 1 from Permissions2resourcetype p2rt where p2rt.id.resTypeId = rt.id)) "
+			+ "or id in (select rt.id from ResourceType rt where exists (select 1 from Role r where r.name = '" + ADMINISTRATOR_ROLE + "' and r.id= :roleId))")
+	Optional<Page<ResourceType>> getResourceTypesByRoleId(@Param("roleId") Integer roleId, Pageable pageable);
 }
