@@ -4,7 +4,9 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -12,6 +14,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -59,7 +64,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
-		enhancerChain.setTokenEnhancers(Arrays.asList(accessTokenConverter));
+		enhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter));
 		endpoints.tokenStore(tokenStore).accessTokenConverter(accessTokenConverter).tokenEnhancer(enhancerChain)
 				.authenticationManager(authenticationManager);
 	}
@@ -68,5 +73,18 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
 		oauthServer.allowFormAuthenticationForClients().tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
 	}
+	
+    @Bean
+    @Primary
+    public AuthorizationServerTokenServices tokenServices() {
+        DefaultTokenServices tokenServices = new DefaultTokenServices();
+        tokenServices.setTokenEnhancer(tokenEnhancer());
+        return tokenServices;
+    }
+	
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return new CustomTokenEnhancer();
+    }
 
 }
