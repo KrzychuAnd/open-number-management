@@ -28,15 +28,23 @@ public class ResourceDto {
 	private String name;
 	@Min(value=1, message="The value must be positive")
 	private int resTypeId;
+	
+	private ResourceTypeDto resourceType;
+
 	@Min(value=1, message="The value must be positive")
 	private int resStatusId;
-	
+
+	private ResourceStatusDto resourceStatus;
+
 	private String descr;
 	private Integer relResId;
+
+	private ResourceDto relatedResource;
+	
 	private String rowAddedUser;
 	private Date rowAddedDttm;
 	private String rowUpdatedUser;
-	
+		
 	@XmlElement(name = "resourceHistories")
 	private Set<ResourceHistoryDto> resourceHistories = new HashSet<>();
 	

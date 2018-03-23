@@ -9,11 +9,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +45,42 @@ public class Resource implements java.io.Serializable {
 	private Date rowAddedDttm;
 	private String rowUpdatedUser;
 	private Date rowUpdatedDttm;
+	
+	private ResourceType resourceType;
+	
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "res_type_id", insertable = false, updatable = false)   
+	public ResourceType getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(ResourceType resourceType) {
+		this.resourceType = resourceType;
+	}
+
+	private ResourceStatus resourceStatus;
+
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "res_status_id", insertable = false, updatable = false)   
+	public ResourceStatus getResourceStatus() {
+		return resourceStatus;
+	}
+
+	public void setResourceStatus(ResourceStatus resourceStatus) {
+		this.resourceStatus = resourceStatus;
+	}
+
+	private Resource relatedResource;
+
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "rel_res_id", insertable = false, updatable = false) 
+    public Resource getRelatedResource() {
+		return relatedResource;
+	}
+
+	public void setRelatedResource(Resource relatedResource) {
+		this.relatedResource = relatedResource;
+	}
 
 	private Set<ResourceHistory> resourceHistories = new HashSet<>();;
 	

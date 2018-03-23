@@ -134,6 +134,11 @@ public class ResourceService {
 			@Override
 			public void accept(ResourceDto resourceDto) {
 				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+				
+				if (resourceDto.getRelatedResource() != null) {
+					resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+				}
+				
 			}
 		});
 
@@ -364,6 +369,10 @@ public class ResourceService {
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
 		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+		
+		if (resourceDto.getRelatedResource() != null) {
+			resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+		}
 		return resourceDto;
 	}
 
@@ -404,7 +413,10 @@ public class ResourceService {
 			@Override
 			public void accept(ResourceDto resourceDto) {
 				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-
+				
+				if (resourceDto.getRelatedResource() != null) {
+					resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+				}
 			}
 
 		});
