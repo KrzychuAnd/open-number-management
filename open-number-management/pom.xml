@@ -6,7 +6,6 @@
 	<groupId>com.open</groupId>
 	<artifactId>number-management</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 
 	<name>open-number-management</name>
 	<description>Open Number Management</description>

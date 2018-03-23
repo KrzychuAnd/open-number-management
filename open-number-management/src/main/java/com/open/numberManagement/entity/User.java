@@ -2,6 +2,7 @@ package com.open.numberManagement.entity;
 // Generated Feb 10, 2018 1:15:48 AM by Hibernate Tools 5.0.6.Final
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static com.open.numberManagement.util.Constants.ADMINISTRATOR_ROLE;
 
 import java.util.Collection;
 import java.util.Date;
@@ -260,6 +261,11 @@ public class User implements UserDetails {
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+	
+	@Transient
+	public boolean isAdminUser() {
+		return (this.role != null && this.role.getName().equals(ADMINISTRATOR_ROLE));
 	}
 
 }

@@ -32,6 +32,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
 		UserDto onmUserDto = dtoMapper.map(onmUser, UserDto.class);
 		
 		additionalInfo.put("user", onmUserDto);
+		additionalInfo.put("isAdminUser", onmUser.isAdminUser());
 
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
 
