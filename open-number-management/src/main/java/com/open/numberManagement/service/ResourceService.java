@@ -284,46 +284,7 @@ public class ResourceService {
 		resourceHistory.setOldDescr(resource.getDescr());
 		resourceHistory.setNewDescr(resource.getDescr());
 
-		for (Map.Entry<String, Object> entry : updates.entrySet()) {
-			String key = entry.getKey();
-			String value = (String) entry.getValue();
-			Integer iValue = null;
-
-			switch (key) {
-			case "relResId":
-				if (!value.equals(NULL_STRING)) {
-					iValue = Integer.valueOf(value);
-					Resource relResource = this.getResourceById(iValue);
-
-					if (iValue.equals(resource.getId()))
-						throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS,
-								String.format(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG));
-				}
-				resource.setRelResId(iValue);
-				resourceHistory.setNewRelResId(iValue);
-				break;
-			case "resStatusId":
-				if (!value.equals(NULL_STRING)) {
-					iValue = Integer.valueOf(value);
-				}
-				isAllowedStatusTransition(resource.getResStatusId(), iValue);
-
-				resource.setResStatusId(iValue);
-				resourceHistory.setTargetStatusId(iValue);
-				break;
-			case "descr":
-				resourceHistory.setNewDescr(value);
-				resource.setDescr(value);
-				break;
-			default:
-				try {
-					resource.getClass().getField(key);
-				} catch (NoSuchFieldException e) {
-					throw new HttpMessageNotReadableException(
-							String.format(ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS, key));
-				}
-			}
-		}
+		updates.forEach((key, value) -> patchResourceProcess(key, (String) value, resource, resourceHistory));
 
 		resourceHistoryService.addResourceHistory(resourceHistory);
 		resourceRepository.save(resource);
@@ -470,7 +431,7 @@ public class ResourceService {
 		resource.setResourceStatus(targetStatus);
 		resourceRepository.save(resource);
 	}
-	
+
 	private void addResource(ResourceResultDto resourceDto, ResourcesDto resourcesDto) {
 		Resource resource = new Resource();
 
@@ -491,6 +452,48 @@ public class ResourceService {
 		} catch (Exception e) {
 			resourceDto.setAddResult(RESOURCE_RESULT_NOK);
 			resourceDto.setAddResultMessage(e.getMessage());
+		}
+	}
+
+	private void patchResourceProcess(String key, String value, Resource resource, ResourceHistory resourceHistory) {
+		Integer iValue = null;
+
+		switch (key) {
+		case "relResId":
+			Resource relResource = null;
+			if (!value.equals(NULL_STRING)) {
+				iValue = Integer.valueOf(value);
+				relResource = this.getResourceById(iValue);
+
+				if (iValue.equals(resource.getId()))
+					throw new ResourceInvalidAgainstBusinessRulesException(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS,
+							String.format(ERR_RESOURCE_AND_RELATED_RESOURCE_EQUALS_MSG));
+			}
+			resource.setRelatedResource(relResource);
+			resource.setRelResId(iValue);
+			resourceHistory.setNewRelResId(iValue);
+			break;
+		case "resStatusId":
+			if (!value.equals(NULL_STRING)) {
+				iValue = Integer.valueOf(value);
+			}
+			isAllowedStatusTransition(resource.getResStatusId(), iValue);
+
+			resource.setResStatusId(iValue);
+			resource.setResourceStatus(resourceStatusService.getResourceStatusById(iValue));
+			resourceHistory.setTargetStatusId(iValue);
+			break;
+		case "descr":
+			resourceHistory.setNewDescr(value);
+			resource.setDescr(value);
+			break;
+		default:
+			try {
+				resource.getClass().getField(key);
+			} catch (NoSuchFieldException e) {
+				throw new HttpMessageNotReadableException(
+						String.format(ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS, key));
+			}
 		}
 	}
 }
