@@ -52,8 +52,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,6 +71,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ResourceService {
+	private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
 
 	@Autowired
 	private ResourceRepository resourceRepository;
@@ -304,6 +310,7 @@ public class ResourceService {
 		ResourceStatus availableResourceStatus = resourceStatusService
 				.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
 		ResourceStatus reservedResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RESERVED);
+		ResourceType resourceType = resourceTypeService.getResourceType(resourceGenerateDto.getResTypeId());
 
 		if (loggedUserHasNoAccessToResourceType(resourceGenerateDto.getResTypeId()))
 			throw new UserNoAccessToResourceTypeException(resourceGenerateDto.getResTypeId());
@@ -321,6 +328,8 @@ public class ResourceService {
 		List<ResourceDto> resourcesDto = dtoMapper.map(resources, ResourceDto.class);
 
 		resourcesDto.forEach(resourceDto -> setResourceDtoHref(resourceDto));
+
+		scheduleResourceBackToAvailable(resources, resourceType);
 
 		return resourcesDto;
 	}
@@ -495,5 +504,32 @@ public class ResourceService {
 						String.format(ERR_RESOURCE_PATCH_JSON_PARAMETER_NOT_EXISTS, key));
 			}
 		}
+	}
+
+	private void scheduleResourceBackToAvailable(List<Resource> resources, ResourceType resourceType) {
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
+		ResourceStatus availableResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_AVAILABLE);
+		ResourceStatus reservedResourceStatus = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RESERVED);
+		executor.schedule(() -> {
+			logger.info(String.format(
+					"Set back %s status of the resources in %s status after %s seconds reservation time configuration of %s Resource Type",
+					availableResourceStatus.getName(), reservedResourceStatus.getName(),
+					resourceType.getReservationTime(), resourceType.getName()));
+
+			resources.forEach(resource -> {
+				Resource res = resourceRepository.findOne(resource.getId());
+				logger.info(String.format("Check status of Resource %s - %s reservedResourceStatus.getId(): %s",
+						res.getName(), res.getResStatusId(), reservedResourceStatus.getId()));
+				if (res.getResStatusId() == reservedResourceStatus.getId()) {
+					logger.info(String.format("Set status of resource %s back to %s status", res.getName(),
+							availableResourceStatus.getName()));
+					//TO BE FIXED! After uncomment the following method loop is finished after first iteration and resource status is not set back to Available!
+					//updateResourceStatus(res, availableResourceStatus);
+				} else {
+					logger.info(String.format("Resource %s is already in %s state", res.getName(),
+							res.getResourceStatus().getName()));
+				}
+			});
+		}, resourceType.getReservationTime(), TimeUnit.SECONDS);
 	}
 }
