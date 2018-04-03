@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,18 +128,7 @@ public class ResourceService {
 
 		List<ResourceDto> resourceDtos = dtoMapper.map(resources.getContent(), ResourceDto.class);
 
-		resourceDtos.forEach(new Consumer<ResourceDto>() {
-
-			@Override
-			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-				
-				if (resourceDto.getRelatedResource() != null) {
-					resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
-				}
-				
-			}
-		});
+		resourceDtos.forEach(resourceDto -> setResourceDtoHref(resourceDto));
 
 		PageResourceDto pageResourceDto = new PageResourceDto();
 		pageResourceDto.setResources(resourceDtos);
@@ -154,34 +142,7 @@ public class ResourceService {
 
 		if (loggedUserHasNoAccessToResourceType(resourcesDto.getResTypeId()))
 			throw new UserNoAccessToResourceTypeException(resourcesDto.getResTypeId());
-
-		resourcesDto.getResources().forEach(new Consumer<ResourceResultDto>() {
-
-			@Override
-			public void accept(ResourceResultDto resourceDto) {
-				Resource resource = new Resource();
-
-				resource.setResTypeId(resourcesDto.getResTypeId());
-				resource.setResStatusId(resourcesDto.getResStatusId());
-				resource.setName(resourceDto.getName());
-				resource.setDescr(resourceDto.getDescr());
-
-				try {
-					resource = addResource(resource);
-					resourceDto.setId(resource.getId());
-					resourceDto.setAddResult(RESOURCE_RESULT_OK);
-					resourceDto.setAddResultMessage(INFO_RESOURCE_ADDED_WITH_SUCCESS);
-					resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-				} catch (ResourceInvalidAgainstBusinessRulesException e) {
-					resourceDto.setAddResult(RESOURCE_RESULT_NOK);
-					resourceDto.setAddResultMessage(e.getMessage());
-				} catch (Exception e) {
-					resourceDto.setAddResult(RESOURCE_RESULT_NOK);
-					resourceDto.setAddResultMessage(e.getMessage());
-				}
-			}
-		});
-
+		resourcesDto.getResources().forEach(resourceDto -> addResource(resourceDto, resourcesDto));
 		return resourcesDto;
 	}
 
@@ -237,8 +198,8 @@ public class ResourceService {
 			resource.setName(Long.toString(resourceNumber));
 
 			this.resourceRepository.save(resource);
-			resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID,
-					resource.getResStatusId(), null, null, null, resource.getDescr());
+			resourceHistory = new ResourceHistory(resource.getId(), RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId(),
+					null, null, null, resource.getDescr());
 			this.resourceHistoryService.addResourceHistory(resourceHistory);
 
 			ResourceResultDto resourceResultDto = dtoMapper.map(resource, ResourceResultDto.class);
@@ -262,12 +223,12 @@ public class ResourceService {
 
 		if (loggedUserHasNoAccessToResourceType(resource))
 			throw new UserNoAccessToResourceTypeException(getResourceType(resource).getName());
-		
+
 		try {
-			if(getResourceByName(resource.getName()) != null)
+			if (getResourceByName(resource.getName()) != null)
 				throw new ResourceAlreadyExistsException(resource.getName());
-		}catch(ResourceNotFoundException e) {
-			//OK - Resource does not exists - do nothing
+		} catch (ResourceNotFoundException e) {
+			// OK - Resource does not exists - do nothing
 		}
 
 		isValidAgainstBusinessRules(resource, RESOURCE_EMPTY_STATUS_ID, resource.getResStatusId());
@@ -369,9 +330,10 @@ public class ResourceService {
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
 		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-		
+
 		if (resourceDto.getRelatedResource() != null) {
-			resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+			resourceDto.getRelatedResource().setHref(
+					uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
 		}
 		return resourceDto;
 	}
@@ -393,33 +355,11 @@ public class ResourceService {
 				.orElseThrow(() -> new ResourceNotFoundException(resourceGenerateDto.getResTypeId(),
 						availableResourceStatus.getId()));
 
-		resources.forEach(new Consumer<Resource>() {
-
-			@Override
-			public void accept(Resource resource) {
-				ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(),
-						reservedResourceStatus.getId());
-				resourceHistoryService.addResourceHistory(resourceHistory);
-				resource.setResStatusId(reservedResourceStatus.getId());
-				resourceRepository.save(resource);
-			}
-
-		});
+		resources.forEach(resource -> updateResourceStatus(resource, reservedResourceStatus));
 
 		List<ResourceDto> resourcesDto = dtoMapper.map(resources, ResourceDto.class);
 
-		resourcesDto.forEach(new Consumer<ResourceDto>() {
-
-			@Override
-			public void accept(ResourceDto resourceDto) {
-				resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
-				
-				if (resourceDto.getRelatedResource() != null) {
-					resourceDto.getRelatedResource().setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
-				}
-			}
-
-		});
+		resourcesDto.forEach(resourceDto -> setResourceDtoHref(resourceDto));
 
 		return resourcesDto;
 	}
@@ -461,14 +401,14 @@ public class ResourceService {
 		isAllowedStatusTransition(sourceStatusId, targetStatusId);
 	}
 
-	//Check if related Resource exists
+	// Check if related Resource exists
 	private void checkRelatedResourceExists(Resource resource) {
 		Resource relResource;
 
 		if (resource.getRelResId() != null)
 			relResource = this.getResourceById(resource.getRelResId());
 	}
-	
+
 	// Check if length of Resource.name equals ResourceType.length
 	private void checkResourceNameLength(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);
@@ -513,4 +453,44 @@ public class ResourceService {
 		return resourceRepository.getMaxResourceNumberByResTypeId(resTypeId).orElse((long) 0);
 	}
 
+	private void setResourceDtoHref(ResourceDto resourceDto) {
+		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+
+		if (resourceDto.getRelatedResource() != null) {
+			resourceDto.getRelatedResource().setHref(
+					uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+		}
+	}
+
+	private void updateResourceStatus(Resource resource, ResourceStatus targetStatus) {
+		ResourceHistory resourceHistory = new ResourceHistory(resource.getId(), resource.getResStatusId(),
+				targetStatus.getId());
+		resourceHistoryService.addResourceHistory(resourceHistory);
+		resource.setResStatusId(targetStatus.getId());
+		resource.setResourceStatus(targetStatus);
+		resourceRepository.save(resource);
+	}
+	
+	private void addResource(ResourceResultDto resourceDto, ResourcesDto resourcesDto) {
+		Resource resource = new Resource();
+
+		resource.setResTypeId(resourcesDto.getResTypeId());
+		resource.setResStatusId(resourcesDto.getResStatusId());
+		resource.setName(resourceDto.getName());
+		resource.setDescr(resourceDto.getDescr());
+
+		try {
+			resource = addResource(resource);
+			resourceDto.setId(resource.getId());
+			resourceDto.setAddResult(RESOURCE_RESULT_OK);
+			resourceDto.setAddResultMessage(INFO_RESOURCE_ADDED_WITH_SUCCESS);
+			resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+		} catch (ResourceInvalidAgainstBusinessRulesException e) {
+			resourceDto.setAddResult(RESOURCE_RESULT_NOK);
+			resourceDto.setAddResultMessage(e.getMessage());
+		} catch (Exception e) {
+			resourceDto.setAddResult(RESOURCE_RESULT_NOK);
+			resourceDto.setAddResultMessage(e.getMessage());
+		}
+	}
 }
