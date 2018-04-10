@@ -466,7 +466,8 @@ public class ResourceService {
 
 	private void patchResourceProcess(String key, String value, Resource resource, ResourceHistory resourceHistory) {
 		Integer iValue = null;
-
+		ResourceStatus resStatus = null;
+		
 		switch (key) {
 		case "relResId":
 			Resource relResource = null;
@@ -485,6 +486,19 @@ public class ResourceService {
 		case "resStatusId":
 			if (!value.equals(NULL_STRING)) {
 				iValue = Integer.valueOf(value);
+			}
+			isAllowedStatusTransition(resource.getResStatusId(), iValue);
+
+			resource.setResStatusId(iValue);
+			resource.setResourceStatus(resourceStatusService.getResourceStatusById(iValue));
+			resourceHistory.setTargetStatusId(iValue);
+			break;
+		case "resStatusName":
+			if (!value.equals(NULL_STRING)) {
+				resStatus = this.resourceStatusService.getResourceStatusByName(value);
+				iValue = resStatus.getId();
+			}else {
+				iValue = RESOURCE_EMPTY_STATUS_ID;
 			}
 			isAllowedStatusTransition(resource.getResStatusId(), iValue);
 
