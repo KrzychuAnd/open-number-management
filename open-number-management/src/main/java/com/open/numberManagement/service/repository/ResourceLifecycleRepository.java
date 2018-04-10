@@ -22,7 +22,12 @@ import org.springframework.stereotype.Repository;
 public interface ResourceLifecycleRepository extends JpaRepository<ResourceLifecycle, Integer>, JpaSpecificationExecutor<ResourceLifecycle> {
 
 	@PreAuthorize("isAuthenticated()")
-	@Description(value = "Get Target Status Ids by Source Status Id")
+	@Description(value = "Get Target Statuses by Source Status Id")
 	@Query("select rs from ResourceLifecycle rl, ResourceStatus rs where rl.sourceStatusId = :sourceStatusId and rs.id = rl.targetStatusId")
 	List<ResourceStatus> getTargetStatusesBySourceStatusId(@Param("sourceStatusId") Integer sourceStatusId);
+	
+	@PreAuthorize("isAuthenticated()")
+	@Description(value = "Get Target Statuses by Source Status Name")
+	@Query("select rs from ResourceLifecycle rl, ResourceStatus rs, ResourceStatus rsl where rsl.name = :sourceStatusName and rl.sourceStatusId = rsl.id and rs.id = rl.targetStatusId")
+	List<ResourceStatus> getTargetStatusesBySourceStatusName(@Param("sourceStatusName") String sourceStatusId);
 }
