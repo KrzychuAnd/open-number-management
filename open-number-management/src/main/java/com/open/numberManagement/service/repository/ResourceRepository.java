@@ -1,6 +1,7 @@
 package com.open.numberManagement.service.repository;
 
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceCount;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,4 +47,8 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer>, Jp
 	@Description(value = "Get Resources by Resource Type ID and Resource Status")
 	@Query("select r from Resource r where r.resTypeId = :resTypeId and r.resStatusId = :resStatusId")
 	Optional<List<Resource>> getResourcesByResTypeAndStatusId(@Param("resTypeId") Integer resTypeId, @Param("resStatusId") Integer resStatusId, Pageable pageable);
+	
+	@Description(value = "Get count Resources per status")
+	@Query("select resTypeId as type, resStatusId as status, count(1) as count from Resource group by resTypeId, resStatusId")
+	List<ResourceCount> getCountResources();
 }

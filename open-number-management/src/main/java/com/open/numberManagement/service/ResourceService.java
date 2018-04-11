@@ -31,11 +31,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.open.numberManagement.dto.DtoMapper;
 import com.open.numberManagement.dto.entity.PageDto;
 import com.open.numberManagement.dto.entity.PageResourceDto;
+import com.open.numberManagement.dto.entity.ResourceCountDto;
 import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
 import com.open.numberManagement.dto.entity.ResourceResultDto;
+import com.open.numberManagement.dto.entity.ResourceStatusDto;
+import com.open.numberManagement.dto.entity.ResourceTypeDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceCount;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceStatus;
 import com.open.numberManagement.entity.ResourceType;
@@ -333,6 +337,16 @@ public class ResourceService {
 
 		return resourcesDto;
 	}
+	
+	@Transactional
+	public List<ResourceCountDto> getResourcesReport() {
+		List<ResourceCount> report = this.resourceRepository.getCountResources();
+		
+		List<ResourceCountDto> reportDto = dtoMapper.map(report, ResourceCountDto.class);
+		reportDto.forEach(resourceCountDto -> updateResourceCountDto(resourceCountDto));
+		
+		return reportDto; 
+	}
 
 	private boolean loggedUserHasNoAccessToResourceType(Resource resource) {
 		ResourceType resourceType = this.getResourceType(resource);
@@ -545,5 +559,13 @@ public class ResourceService {
 				}
 			});
 		}, resourceType.getReservationTime(), TimeUnit.SECONDS);
+	}
+	
+	private void updateResourceCountDto(ResourceCountDto resourceCountDto) {
+		ResourceTypeDto resourceTypeDto = dtoMapper.map(this.resourceTypeService.getResourceType(resourceCountDto.getResTypeId()), ResourceTypeDto.class );
+		ResourceStatusDto resourceStatusDto = dtoMapper.map(this.resourceStatusService.getResourceStatusById(resourceCountDto.getResStatusId()), ResourceStatusDto.class);
+		
+		resourceCountDto.setResourceType(resourceTypeDto);
+		resourceCountDto.setResourceStatus(resourceStatusDto);
 	}
 }

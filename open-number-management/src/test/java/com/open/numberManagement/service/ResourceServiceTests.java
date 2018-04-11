@@ -22,7 +22,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.open.numberManagement.dto.entity.PageResourceDto;
+import com.open.numberManagement.dto.entity.ResourceCountDto;
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceCount;
 import com.open.numberManagement.entity.ResourceStatus;
 import com.open.numberManagement.entity.ResourceType;
 import com.open.numberManagement.exception.ResourceNotFoundException;
@@ -116,5 +118,14 @@ public class ResourceServiceTests {
 		}
 
 		assertEquals(null, testResource);
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", authorities = { ADMINISTRATOR_PERMISSION })
+	@Transactional
+	public void reportResources() {
+		List<ResourceCountDto> report = this.resourceService.getResourcesReport();
+
+		assertNotEquals(null, report);
 	}
 }

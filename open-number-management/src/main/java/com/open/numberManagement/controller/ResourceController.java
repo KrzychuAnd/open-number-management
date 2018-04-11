@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.open.numberManagement.dto.DtoMapper;
 import com.open.numberManagement.dto.entity.PageResourceDto;
+import com.open.numberManagement.dto.entity.ResourceCountDto;
 import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
+import com.open.numberManagement.dto.entity.ResourceTypeDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
+import com.open.numberManagement.entity.ResourceCount;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceType;
 import com.open.numberManagement.service.ResourceHistoryService;
@@ -151,4 +154,12 @@ public class ResourceController {
 		
 		return resourceService.reserveResources(resourceGenerateDto);
 	}	
+	
+	@GetMapping(value = "report")
+	@ResponseBody
+	public List<ResourceCountDto> getResourcesReport() {
+
+		return resourceService.getResourcesReport();
+	}
+	
 }
