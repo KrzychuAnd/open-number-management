@@ -133,10 +133,9 @@ public class ResourceController {
 	}
 	
 	@PatchMapping(value = "retire/{name}")
-	public ResponseEntity<Resource> retireResource(@PathVariable("name") String name) {
-		Resource resource = resourceService.retireResource(name);
-
-		return noContent().build();
+	@ResponseBody
+	public ResourceDto retireResource(@PathVariable("name") String name) {
+		return resourceService.retireResource(name);
 	}
 	
 	@PostMapping(value= "generate")

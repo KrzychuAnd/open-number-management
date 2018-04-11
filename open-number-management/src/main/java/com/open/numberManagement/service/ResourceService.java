@@ -260,7 +260,8 @@ public class ResourceService {
 	}
 
 	@Transactional
-	public Resource retireResource(String resourceName) {
+	public ResourceDto retireResource(String resourceName) {
+		ResourceDto resourceDto;
 		Resource resource = getResourceByName(resourceName);
 		Integer retiredStatusId = resourceStatusService.getResourceStatusByName(RESOURCE_STATUS_RETIRED).getId();
 
@@ -275,7 +276,15 @@ public class ResourceService {
 		resource.setResStatusId(retiredStatusId);
 
 		this.resourceRepository.save(resource);
-		return resource;
+		
+		resourceDto = dtoMapper.map(resource, ResourceDto.class);
+		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
+
+		if (resourceDto.getRelatedResource() != null) {
+			resourceDto.getRelatedResource().setHref(
+					uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getRelatedResource().getId()));
+		}
+		return resourceDto;
 	}
 
 	@Transactional
