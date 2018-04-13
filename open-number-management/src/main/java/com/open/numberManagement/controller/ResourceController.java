@@ -1,7 +1,6 @@
 package com.open.numberManagement.controller;
 
 import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.noContent;
 import static com.open.numberManagement.util.Constants.URL_VERSION_AND_RESOURCE_PATH;
 
 import java.net.URI;
@@ -28,10 +27,9 @@ import com.open.numberManagement.dto.entity.PageResourceDto;
 import com.open.numberManagement.dto.entity.ResourceCountDto;
 import com.open.numberManagement.dto.entity.ResourceDto;
 import com.open.numberManagement.dto.entity.ResourceGenerateDto;
-import com.open.numberManagement.dto.entity.ResourceTypeDto;
+import com.open.numberManagement.dto.entity.ResourceHistoryDto;
 import com.open.numberManagement.dto.entity.ResourcesDto;
 import com.open.numberManagement.entity.Resource;
-import com.open.numberManagement.entity.ResourceCount;
 import com.open.numberManagement.entity.ResourceHistory;
 import com.open.numberManagement.entity.ResourceType;
 import com.open.numberManagement.service.ResourceHistoryService;
@@ -82,7 +80,9 @@ public class ResourceController {
 		Resource resource = resourceService.getResourceById(id);
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
-		resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resource.getId()));
+		this.resourceService.setResourceDtoHref(resourceDto);
+		
+		resourceDto.getResourceHistories().forEach(resourceHistory -> updateResourceHistoryRelatedResources(resourceHistory));
 		
 		return resourceDto;
 	}
@@ -93,7 +93,8 @@ public class ResourceController {
 		Resource resource = resourceService.getResourceByName(name);
 
 		ResourceDto resourceDto = dtoMapper.map(resource, ResourceDto.class);
-		resourceDto.setHref(uriBuilder.getHrefWithId( URL_VERSION_AND_RESOURCE_PATH, resource.getId()));
+		this.resourceService.setResourceDtoHref(resourceDto);
+		resourceDto.getResourceHistories().forEach(resourceHistory -> updateResourceHistoryRelatedResources(resourceHistory));
 		
 		return resourceDto;
 	}
@@ -161,4 +162,18 @@ public class ResourceController {
 		return resourceService.getResourcesReport();
 	}
 	
+	//!!! Workaround for Hibernate issue with Related Resource null pointer! 
+	//This issue occurs when I uncomment oldRelatedResource property of ResourceHistory!
+	private void updateResourceHistoryRelatedResources(ResourceHistoryDto resourceHistory) {
+		Resource oldRelatedResource;
+		ResourceDto oldRelatedResourceDto;
+		if(resourceHistory.getOldRelResId() != null) {
+			oldRelatedResource = this.resourceService.getResourceById(resourceHistory.getOldRelResId());
+			oldRelatedResourceDto = dtoMapper.map(oldRelatedResource, ResourceDto.class);
+			this.resourceService.setResourceDtoHref(oldRelatedResourceDto);
+			resourceHistory.setOldRelatedResource(oldRelatedResourceDto);
+		}
+		if(resourceHistory.getNewRelatedResource() != null)
+			this.resourceService.setResourceDtoHref(resourceHistory.getNewRelatedResource());
+	}
 }

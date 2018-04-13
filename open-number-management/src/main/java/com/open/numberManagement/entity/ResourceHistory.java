@@ -5,14 +5,15 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,9 +29,22 @@ public class ResourceHistory implements java.io.Serializable {
 	private Integer id;
 	private int resId;
 	private Integer sourceStatusId;
+	
+	private ResourceStatus sourceStatus;
+	
 	private int targetStatusId;
+	
+	private ResourceStatus targetStatus;
+	
 	private Integer oldRelResId;
+	// Hibernate issue??
+	//When I uncomment the following row then Resource.RelatedResource null pointer issue appear! 
+	//private Resource oldRelatedResource;
+	
 	private Integer newRelResId;
+	
+	private Resource newRelatedResource;
+	
 	private String oldDescr;
 	private String newDescr;
 	private String rowAddedUser;
@@ -174,4 +188,45 @@ public class ResourceHistory implements java.io.Serializable {
 		this.rowAddedDttm = rowAddedDttm;
 	}
 
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "source_status_id", insertable = false, updatable = false)   
+	public ResourceStatus getSourceStatus() {
+		return sourceStatus;
+	}
+
+	public void setSourceStatus(ResourceStatus sourceStatus) {
+		this.sourceStatus = sourceStatus;
+	}
+
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "target_status_id", insertable = false, updatable = false) 
+	public ResourceStatus getTargetStatus() {
+		return targetStatus;
+	}
+
+	public void setTargetStatus(ResourceStatus targetStatus) {
+		this.targetStatus = targetStatus;
+	}
+
+	/*@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "old_rel_res_id", insertable = false, updatable = false) 
+	public Resource getOldRelatedResource() {
+		return oldRelatedResource;
+	}
+
+	public void setOldRelatedResource(Resource oldRelatedResource) {
+		this.oldRelatedResource = oldRelatedResource;
+	}*/
+
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "new_rel_res_id", insertable = false, updatable = false) 
+	public Resource getNewRelatedResource() {
+		return newRelatedResource;
+	}
+
+	public void setNewRelatedResource(Resource newRelatedResource) {
+		this.newRelatedResource = newRelatedResource;
+	}
+
+	
 }

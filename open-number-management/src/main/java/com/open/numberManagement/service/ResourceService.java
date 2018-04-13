@@ -446,7 +446,7 @@ public class ResourceService {
 		return resourceRepository.getMaxResourceNumberByResTypeId(resTypeId).orElse((long) 0);
 	}
 
-	private void setResourceDtoHref(ResourceDto resourceDto) {
+	public void setResourceDtoHref(ResourceDto resourceDto) {
 		resourceDto.setHref(uriBuilder.getHrefWithId(URL_VERSION_AND_RESOURCE_PATH, resourceDto.getId()));
 
 		if (resourceDto.getRelatedResource() != null) {
