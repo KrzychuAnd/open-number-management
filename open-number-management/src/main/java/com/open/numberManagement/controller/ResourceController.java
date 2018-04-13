@@ -121,7 +121,9 @@ public class ResourceController {
 	@PatchMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResourceDto patchResource(@PathVariable("id") Integer id, @RequestBody Map<String, Object> updates) {
-		return resourceService.patchResource(id, updates);
+		ResourceDto resourceDto = resourceService.patchResource(id, updates);
+		resourceDto.getResourceHistories().forEach(resourceHistory -> updateResourceHistoryRelatedResources(resourceHistory));
+		return resourceDto;
 	}
 
 	@PostMapping(value= "many")

@@ -297,9 +297,12 @@ public class ResourceService {
 
 		resourceHistory.setResId(id);
 		resourceHistory.setSourceStatusId(resource.getResStatusId());
+		resourceHistory.setSourceStatus(resource.getResourceStatus());
 		resourceHistory.setTargetStatusId(resource.getResStatusId());
+		resourceHistory.setTargetStatus(resource.getResourceStatus());
 		resourceHistory.setOldRelResId(resource.getRelResId());
 		resourceHistory.setNewRelResId(resource.getRelResId());
+		resourceHistory.setNewRelatedResource(resource.getRelatedResource());
 		resourceHistory.setOldDescr(resource.getDescr());
 		resourceHistory.setNewDescr(resource.getDescr());
 
@@ -515,6 +518,7 @@ public class ResourceService {
 			resource.setResStatusId(iValue);
 			resource.setResourceStatus(resourceStatusService.getResourceStatusById(iValue));
 			resourceHistory.setTargetStatusId(iValue);
+			resourceHistory.setTargetStatus(resource.getResourceStatus());
 			break;
 		case "resStatusName":
 			if (!value.equals(NULL_STRING)) {
@@ -528,6 +532,7 @@ public class ResourceService {
 			resource.setResStatusId(iValue);
 			resource.setResourceStatus(resourceStatusService.getResourceStatusById(iValue));
 			resourceHistory.setTargetStatusId(iValue);
+			resourceHistory.setTargetStatus(resource.getResourceStatus());
 			break;
 		case "descr":
 			resourceHistory.setNewDescr(value);
